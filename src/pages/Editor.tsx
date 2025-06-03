@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "sonner";
 import { EditorHeader } from "@/components/EditorHeader";
@@ -24,6 +24,37 @@ const Editor = () => {
   const [totalDuration, setTotalDuration] = useState(60);
   const [isPlaying, setIsPlaying] = useState(false);
   const [volume, setVolume] = useState(50);
+  const [selectedTemplate, setSelectedTemplate] = useState<string | null>(null);
+
+  // Load uploaded files and template data on component mount
+  useEffect(() => {
+    const uploadedFilesData = sessionStorage.getItem('uploadedFiles');
+    const templateData = sessionStorage.getItem('selectedTemplate');
+    
+    if (uploadedFilesData) {
+      const uploadedFiles = JSON.parse(uploadedFilesData);
+      const newClips: Clip[] = uploadedFiles.map((fileData: any, index: number) => ({
+        id: Date.now().toString() + index,
+        name: fileData.name,
+        duration: 10, // This would be determined from the actual video file
+        startTime: index * 10, // Auto-arrange clips sequentially
+        trimStart: 0,
+        trimEnd: 10,
+        url: fileData.url
+      }));
+      
+      setClips(newClips);
+      setTotalDuration(newClips.reduce((acc, clip) => acc + clip.duration, 0));
+      
+      if (newClips.length > 0) {
+        toast.success(`Loaded ${newClips.length} clips from upload`);
+      }
+    }
+    
+    if (templateData && templateData !== "none") {
+      setSelectedTemplate(templateData);
+    }
+  }, []);
 
   const handleClipAdd = (file: File) => {
     const url = URL.createObjectURL(file);
