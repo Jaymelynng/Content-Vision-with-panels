@@ -56,7 +56,7 @@ export function SidebarNav() {
             const isActive = location.pathname === item.href;
             return (
               <SidebarMenuItem key={item.title}>
-                <SidebarMenuButton asChild active={isActive}>
+                <SidebarMenuButton asChild>
                   <Link 
                     to={item.href} 
                     className={cn("flex items-center gap-3 px-3 py-2 rounded-md", isActive ? "bg-sidebar-accent text-sidebar-accent-foreground" : "hover:bg-sidebar-accent/50")}

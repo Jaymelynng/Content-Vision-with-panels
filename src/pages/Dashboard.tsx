@@ -1,6 +1,5 @@
-
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { AreaChart, Bar } from "lucide-react";
+import { AreaChart, BarChart3 } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
@@ -47,7 +46,7 @@ const Dashboard = () => {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between pb-2">
             <CardTitle className="text-sm font-medium">Pending Approvals</CardTitle>
-            <Bar className="h-4 w-4 text-muted-foreground" />
+            <BarChart3 className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">3</div>
