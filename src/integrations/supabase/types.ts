@@ -72,6 +72,109 @@ export type Database = {
         }
         Relationships: []
       }
+      extracted_content_ideas: {
+        Row: {
+          approval_status: string
+          approved_at: string | null
+          category: string
+          content_idea_id: number | null
+          created_at: string
+          description: string
+          difficulty: string
+          document_id: string
+          engagement: string
+          features: string[]
+          formats: string[]
+          gym_id: string
+          id: string
+          imported_to_content_ideas: boolean
+          production_tips_photo: string[]
+          production_tips_video: string[]
+          requirements: Json
+          setup_planning_photo: string[]
+          setup_planning_video: string[]
+          target_audience: string[]
+          title: string
+          updated_at: string
+          upload_track_photo: string[]
+          upload_track_video: string[]
+        }
+        Insert: {
+          approval_status?: string
+          approved_at?: string | null
+          category: string
+          content_idea_id?: number | null
+          created_at?: string
+          description: string
+          difficulty: string
+          document_id: string
+          engagement: string
+          features?: string[]
+          formats?: string[]
+          gym_id: string
+          id?: string
+          imported_to_content_ideas?: boolean
+          production_tips_photo?: string[]
+          production_tips_video?: string[]
+          requirements?: Json
+          setup_planning_photo?: string[]
+          setup_planning_video?: string[]
+          target_audience?: string[]
+          title: string
+          updated_at?: string
+          upload_track_photo?: string[]
+          upload_track_video?: string[]
+        }
+        Update: {
+          approval_status?: string
+          approved_at?: string | null
+          category?: string
+          content_idea_id?: number | null
+          created_at?: string
+          description?: string
+          difficulty?: string
+          document_id?: string
+          engagement?: string
+          features?: string[]
+          formats?: string[]
+          gym_id?: string
+          id?: string
+          imported_to_content_ideas?: boolean
+          production_tips_photo?: string[]
+          production_tips_video?: string[]
+          requirements?: Json
+          setup_planning_photo?: string[]
+          setup_planning_video?: string[]
+          target_audience?: string[]
+          title?: string
+          updated_at?: string
+          upload_track_photo?: string[]
+          upload_track_video?: string[]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "extracted_content_ideas_content_idea_id_fkey"
+            columns: ["content_idea_id"]
+            isOneToOne: false
+            referencedRelation: "content_ideas"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "extracted_content_ideas_document_id_fkey"
+            columns: ["document_id"]
+            isOneToOne: false
+            referencedRelation: "uploaded_documents"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "extracted_content_ideas_gym_id_fkey"
+            columns: ["gym_id"]
+            isOneToOne: false
+            referencedRelation: "gym_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       gym_profiles: {
         Row: {
           active: boolean | null
@@ -101,6 +204,56 @@ export type Database = {
           updated_at?: string | null
         }
         Relationships: []
+      }
+      uploaded_documents: {
+        Row: {
+          created_at: string
+          file_path: string
+          file_size: number
+          file_type: string
+          filename: string
+          gym_id: string
+          id: string
+          processed_at: string | null
+          processing_status: string
+          updated_at: string
+          upload_status: string
+        }
+        Insert: {
+          created_at?: string
+          file_path: string
+          file_size: number
+          file_type: string
+          filename: string
+          gym_id: string
+          id?: string
+          processed_at?: string | null
+          processing_status?: string
+          updated_at?: string
+          upload_status?: string
+        }
+        Update: {
+          created_at?: string
+          file_path?: string
+          file_size?: number
+          file_type?: string
+          filename?: string
+          gym_id?: string
+          id?: string
+          processed_at?: string | null
+          processing_status?: string
+          updated_at?: string
+          upload_status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "uploaded_documents_gym_id_fkey"
+            columns: ["gym_id"]
+            isOneToOne: false
+            referencedRelation: "gym_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       user_content_progress: {
         Row: {
