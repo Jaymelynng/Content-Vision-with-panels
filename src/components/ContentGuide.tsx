@@ -17,44 +17,28 @@ export function ContentGuide({ open, onClose, contentId }: ContentGuideProps) {
   const [selectedFormat, setSelectedFormat] = useState<'photo' | 'video'>('photo');
   const [uploadProgress, setUploadProgress] = useState<{ [key: string]: number }>({});
   
-  // Enhanced guide data with new structure
+  // Restructured guide data with new workflow organization
   const guideData = {
     1: {
       title: "Handstand = Homework Focus",
       description: "Educational content connecting gymnastics skills to academic success",
-      postVisual: {
+      setupPlanning: {
         photo: [
-          "Split-screen layout: handstand on left, focused homework on right",
-          "Use bright, clean background with good natural lighting",
-          "Include text overlay: 'Balance in Gym = Focus in School'",
-          "Show clear facial expressions of concentration",
-          "Add motivational graphics with progress indicators"
+          "Plan split-screen layout: handstand on left, focused homework on right",
+          "Choose bright, clean background with good natural lighting",
+          "Prepare text overlay: 'Balance in Gym = Focus in School'",
+          "Set up homework materials and gymnastics space",
+          "Plan key message: 'The balance I learn in gymnastics helps me focus on homework'"
         ],
         video: [
-          "Start with handstand hold (3-5 seconds of solid form)",
-          "Quick transition to homework desk setup",
-          "Use dynamic text animations for key messages",
-          "Include before/after comparison shots",
-          "End with achievement celebration moment"
+          "Storyboard: handstand hold → transition → homework desk setup",
+          "Plan dynamic text animations for key messages",
+          "Prepare before/after comparison shots",
+          "Script opening hook: 'Want to know the secret to homework focus?'",
+          "Plan engagement question: 'How do you prepare your mind for homework?'"
         ]
       },
-      contentNotes: {
-        photo: [
-          "Key message: 'The balance I learn in gymnastics helps me focus on homework'",
-          "Emphasize mind-body connection and transferable skills",
-          "Include personal story about concentration improvement",
-          "Mention specific benefits: better posture, increased focus time",
-          "Call-to-action: 'What skills help you focus? Tell us below!'"
-        ],
-        video: [
-          "Opening hook: 'Want to know the secret to homework focus?'",
-          "Explain the connection: core strength = mental strength",
-          "Share specific example: 'After gymnastics, I can study for 30 minutes straight'",
-          "Educational element: demonstrate proper handstand form briefly",
-          "Engagement question: 'How do you prepare your mind for homework?'"
-        ]
-      },
-      filmingTips: {
+      productionTips: {
         photo: [
           "Use tripod for stability when capturing handstand",
           "Natural lighting works best - avoid harsh shadows",
@@ -66,8 +50,24 @@ export function ContentGuide({ open, onClose, contentId }: ContentGuideProps) {
           "Record in landscape orientation for best quality",
           "Use stable surface or tripod - no shaky footage",
           "Ensure audio is clear if speaking during handstand",
-          "Plan transitions between handstand and homework scenes",
+          "Plan smooth transitions between handstand and homework scenes",
           "Keep individual clips short (15-30 seconds max)"
+        ]
+      },
+      uploadTrack: {
+        photo: [
+          "Export in high resolution (at least 1080p)",
+          "Use JPG or PNG format for best compatibility",
+          "Keep file size under 10MB for faster uploads",
+          "Add relevant hashtags and captions before posting",
+          "Track engagement metrics after posting"
+        ],
+        video: [
+          "Export in MP4 format for best compatibility",
+          "Keep file size under 100MB for platform requirements",
+          "Add captions for accessibility",
+          "Schedule posting for optimal engagement times",
+          "Monitor comments and engagement in first hour"
         ]
       },
       requirements: [
@@ -133,12 +133,7 @@ export function ContentGuide({ open, onClose, contentId }: ContentGuideProps) {
               selectedFormat={selectedFormat}
               onFormatChange={setSelectedFormat}
             />
-            <ContentStats 
-              difficulty="Easy"
-              estimatedTime="30-45 min"
-              equipment="Wall space"
-              safety="Intermediate"
-            />
+            <ContentStats />
           </div>
 
           <ContentTabs 

@@ -2,20 +2,20 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Image } from "lucide-react";
+import { Image, Settings, Video } from "lucide-react";
 
 interface ContentTabsProps {
   selectedFormat: 'photo' | 'video';
   guideData: {
-    postVisual: {
+    setupPlanning: {
       photo: string[];
       video: string[];
     };
-    contentNotes: {
+    productionTips: {
       photo: string[];
       video: string[];
     };
-    filmingTips: {
+    uploadTrack: {
       photo: string[];
       video: string[];
     };
@@ -38,50 +38,35 @@ export function ContentTabs({ selectedFormat, guideData }: ContentTabsProps) {
 
   return (
     <div className="flex-1 overflow-y-auto">
-      <Tabs defaultValue="visual" className="w-full">
+      <Tabs defaultValue="setup" className="w-full">
         <TabsList className="grid w-full grid-cols-3">
-          <TabsTrigger value="visual">Post Visual</TabsTrigger>
-          <TabsTrigger value="notes">Content Notes</TabsTrigger>
-          <TabsTrigger value="filming">Filming Tips</TabsTrigger>
+          <TabsTrigger value="setup">Setup & Planning</TabsTrigger>
+          <TabsTrigger value="production">Production Tips</TabsTrigger>
+          <TabsTrigger value="upload">Upload & Track</TabsTrigger>
         </TabsList>
 
-        <TabsContent value="visual" className="mt-4">
+        <TabsContent value="setup" className="mt-4">
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <Image className="w-5 h-5" />
-                Visual Composition
+                <Settings className="w-5 h-5" />
+                Content Planning & Strategy
                 <Badge variant={selectedFormat === 'photo' ? 'default' : 'secondary'}>
                   {selectedFormat === 'photo' ? 'Photo' : 'Video'}
                 </Badge>
               </CardTitle>
             </CardHeader>
             <CardContent>
-              {renderListItems(guideData.postVisual[selectedFormat])}
+              {renderListItems(guideData.setupPlanning[selectedFormat])}
             </CardContent>
           </Card>
         </TabsContent>
 
-        <TabsContent value="notes" className="mt-4">
+        <TabsContent value="production" className="mt-4">
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                Content & Messaging
-                <Badge variant={selectedFormat === 'photo' ? 'default' : 'secondary'}>
-                  {selectedFormat === 'photo' ? 'Photo' : 'Video'}
-                </Badge>
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              {renderListItems(guideData.contentNotes[selectedFormat])}
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        <TabsContent value="filming" className="mt-4">
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
+                <Video className="w-5 h-5" />
                 Production Guidelines
                 <Badge variant={selectedFormat === 'photo' ? 'default' : 'secondary'}>
                   {selectedFormat === 'photo' ? 'Photo' : 'Video'}
@@ -89,7 +74,24 @@ export function ContentTabs({ selectedFormat, guideData }: ContentTabsProps) {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              {renderListItems(guideData.filmingTips[selectedFormat])}
+              {renderListItems(guideData.productionTips[selectedFormat])}
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="upload" className="mt-4">
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Image className="w-5 h-5" />
+                Upload & Tracking
+                <Badge variant={selectedFormat === 'photo' ? 'default' : 'secondary'}>
+                  {selectedFormat === 'photo' ? 'Photo' : 'Video'}
+                </Badge>
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              {renderListItems(guideData.uploadTrack[selectedFormat])}
             </CardContent>
           </Card>
         </TabsContent>

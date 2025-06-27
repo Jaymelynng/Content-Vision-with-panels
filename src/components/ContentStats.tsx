@@ -1,20 +1,10 @@
 
-interface ContentStatsProps {
-  difficulty: string;
-  estimatedTime: string;
-  equipment: string;
-  safety: string;
-}
-
-export function ContentStats({ difficulty, estimatedTime, equipment, safety }: ContentStatsProps) {
+export function ContentStats() {
   return (
     <div className="mt-6 p-3 bg-slate-50 rounded-lg">
-      <h4 className="font-medium text-sm mb-2">Content Stats</h4>
-      <div className="space-y-1 text-sm text-muted-foreground">
-        <div>Difficulty: {difficulty}</div>
-        <div>Est. Time: {estimatedTime}</div>
-        <div>Equipment: {equipment}</div>
-        <div>Safety: {safety}</div>
+      <h4 className="font-medium text-sm mb-2">Content Metrics</h4>
+      <div className="text-sm text-muted-foreground text-center py-4">
+        Metrics will be configured later
       </div>
     </div>
   );
