@@ -1,23 +1,11 @@
+
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Heart, Image, Play, Instagram } from "lucide-react";
 import { getAudienceBadge, getFormatBadge, getStatusIcon } from "@/utils/contentUtils";
 import { ContentGuide } from "./ContentGuide";
 import { useState } from "react";
-
-interface ContentIdea {
-  id: number;
-  title: string;
-  description: string;
-  category: string;
-  targetAudience: string[];
-  formats: string[];
-  difficulty: string;
-  engagement: string;
-  status: string;
-  thumbnail: string;
-  features: string[];
-}
+import type { ContentIdea } from "@/hooks/useContentIdeas";
 
 interface ContentCardProps {
   idea: ContentIdea;
@@ -34,7 +22,7 @@ const ContentCard = ({ idea, isFavorite, onToggleFavorite }: ContentCardProps) =
         <CardHeader className="p-0">
           <div className="aspect-video bg-gradient-to-br from-slate-100 to-slate-200 relative overflow-hidden">
             <img 
-              src={idea.thumbnail} 
+              src={idea.thumbnail || '/placeholder.svg'} 
               alt={idea.title} 
               className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200" 
             />
@@ -62,7 +50,7 @@ const ContentCard = ({ idea, isFavorite, onToggleFavorite }: ContentCardProps) =
           <div className="flex items-start justify-between mb-2">
             <CardTitle className="text-lg leading-tight">{idea.title}</CardTitle>
             <div className="flex items-center gap-2">
-              {getStatusIcon(idea.status)}
+              {getStatusIcon('new')}
               <button 
                 onClick={() => onToggleFavorite(idea.id)} 
                 className="text-muted-foreground hover:text-red-500 transition-colors"
@@ -74,7 +62,7 @@ const ContentCard = ({ idea, isFavorite, onToggleFavorite }: ContentCardProps) =
           <p className="text-muted-foreground text-sm mb-3 line-clamp-2">{idea.description}</p>
           
           <div className="flex flex-wrap gap-1 mb-3">
-            {idea.targetAudience.map((audience) => (
+            {idea.target_audience.map((audience) => (
               <div key={audience}>
                 {getAudienceBadge(audience)}
               </div>
@@ -110,6 +98,7 @@ const ContentCard = ({ idea, isFavorite, onToggleFavorite }: ContentCardProps) =
         open={showGuide}
         onClose={() => setShowGuide(false)}
         contentId={idea.id}
+        contentData={idea}
       />
     </>
   );

@@ -1,40 +1,34 @@
 
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
+import { Button } from "@/components/ui/button";
+import { useAuth } from "@/hooks/useAuth";
+import { User, LogOut } from "lucide-react";
+import { 
+  DropdownMenu, 
+  DropdownMenuContent, 
+  DropdownMenuItem, 
+  DropdownMenuTrigger 
 } from "@/components/ui/dropdown-menu";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 
 export function UserNav() {
+  const { user, signOut } = useAuth();
+
+  if (!user) {
+    return null;
+  }
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <button className="flex items-center gap-2 w-full px-2 py-2 text-left rounded-md hover:bg-sidebar-accent transition-colors">
-          <Avatar className="h-8 w-8 border border-sidebar-border">
-            <AvatarFallback className="bg-sidebar-accent text-sidebar-accent-foreground">JD</AvatarFallback>
-          </Avatar>
-          <div className="flex-1 overflow-hidden">
-            <p className="text-sm font-medium text-sidebar-foreground truncate">
-              Jayme Doe
-            </p>
-            <p className="text-xs text-sidebar-foreground/60 truncate">
-              Main Gym (CRR)
-            </p>
-          </div>
-        </button>
+        <Button variant="ghost" size="sm" className="gap-2">
+          <User className="h-4 w-4" />
+          {user.email}
+        </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent className="w-56" align="start" side="right" sideOffset={28}>
-        <DropdownMenuLabel>My Account</DropdownMenuLabel>
-        <DropdownMenuSeparator />
-        <DropdownMenuItem>Profile</DropdownMenuItem>
-        <DropdownMenuItem>Gym Settings</DropdownMenuItem>
-        <DropdownMenuItem>Team</DropdownMenuItem>
-        <DropdownMenuSeparator />
-        <DropdownMenuItem>Log out</DropdownMenuItem>
+      <DropdownMenuContent align="end">
+        <DropdownMenuItem onClick={signOut}>
+          <LogOut className="h-4 w-4 mr-2" />
+          Sign Out
+        </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   );

@@ -9,7 +9,145 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      [_ in never]: never
+      content_ideas: {
+        Row: {
+          category: string
+          created_at: string | null
+          description: string
+          difficulty: string
+          engagement: string
+          features: string[]
+          formats: string[]
+          id: number
+          production_tips_photo: string[]
+          production_tips_video: string[]
+          requirements: Json
+          setup_planning_photo: string[]
+          setup_planning_video: string[]
+          target_audience: string[]
+          thumbnail: string | null
+          title: string
+          upload_track_photo: string[]
+          upload_track_video: string[]
+        }
+        Insert: {
+          category: string
+          created_at?: string | null
+          description: string
+          difficulty: string
+          engagement: string
+          features: string[]
+          formats: string[]
+          id?: number
+          production_tips_photo: string[]
+          production_tips_video: string[]
+          requirements: Json
+          setup_planning_photo: string[]
+          setup_planning_video: string[]
+          target_audience: string[]
+          thumbnail?: string | null
+          title: string
+          upload_track_photo: string[]
+          upload_track_video: string[]
+        }
+        Update: {
+          category?: string
+          created_at?: string | null
+          description?: string
+          difficulty?: string
+          engagement?: string
+          features?: string[]
+          formats?: string[]
+          id?: number
+          production_tips_photo?: string[]
+          production_tips_video?: string[]
+          requirements?: Json
+          setup_planning_photo?: string[]
+          setup_planning_video?: string[]
+          target_audience?: string[]
+          thumbnail?: string | null
+          title?: string
+          upload_track_photo?: string[]
+          upload_track_video?: string[]
+        }
+        Relationships: []
+      }
+      user_content_progress: {
+        Row: {
+          content_id: number | null
+          created_at: string | null
+          draft_data: Json | null
+          id: string
+          selected_format: string
+          status: string | null
+          updated_at: string | null
+          upload_progress: Json | null
+          uploaded_files: Json | null
+          user_id: string | null
+        }
+        Insert: {
+          content_id?: number | null
+          created_at?: string | null
+          draft_data?: Json | null
+          id?: string
+          selected_format: string
+          status?: string | null
+          updated_at?: string | null
+          upload_progress?: Json | null
+          uploaded_files?: Json | null
+          user_id?: string | null
+        }
+        Update: {
+          content_id?: number | null
+          created_at?: string | null
+          draft_data?: Json | null
+          id?: string
+          selected_format?: string
+          status?: string | null
+          updated_at?: string | null
+          upload_progress?: Json | null
+          uploaded_files?: Json | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_content_progress_content_id_fkey"
+            columns: ["content_id"]
+            isOneToOne: false
+            referencedRelation: "content_ideas"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_favorites: {
+        Row: {
+          content_id: number | null
+          created_at: string | null
+          id: string
+          user_id: string | null
+        }
+        Insert: {
+          content_id?: number | null
+          created_at?: string | null
+          id?: string
+          user_id?: string | null
+        }
+        Update: {
+          content_id?: number | null
+          created_at?: string | null
+          id?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_favorites_content_id_fkey"
+            columns: ["content_id"]
+            isOneToOne: false
+            referencedRelation: "content_ideas"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never

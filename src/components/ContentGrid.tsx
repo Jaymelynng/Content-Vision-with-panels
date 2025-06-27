@@ -1,19 +1,6 @@
 
 import ContentCard from "./ContentCard";
-
-interface ContentIdea {
-  id: number;
-  title: string;
-  description: string;
-  category: string;
-  targetAudience: string[];
-  formats: string[];
-  difficulty: string;
-  engagement: string;
-  status: string;
-  thumbnail: string;
-  features: string[];
-}
+import type { ContentIdea } from "@/hooks/useContentIdeas";
 
 interface ContentGridProps {
   ideas: ContentIdea[];
