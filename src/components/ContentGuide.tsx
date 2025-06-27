@@ -6,6 +6,8 @@ import { FormatSelector } from "./FormatSelector";
 import { ContentStats } from "./ContentStats";
 import { ContentTabs } from "./ContentTabs";
 import { UploadRequirements } from "./UploadRequirements";
+import { toast } from "sonner";
+import { useNavigate } from "react-router-dom";
 
 interface ContentGuideProps {
   open: boolean;
@@ -16,6 +18,8 @@ interface ContentGuideProps {
 export function ContentGuide({ open, onClose, contentId }: ContentGuideProps) {
   const [selectedFormat, setSelectedFormat] = useState<'photo' | 'video'>('photo');
   const [uploadProgress, setUploadProgress] = useState<{ [key: string]: number }>({});
+  const [uploadedFiles, setUploadedFiles] = useState<{ [key: string]: File }>({});
+  const navigate = useNavigate();
   
   // Restructured guide data with new workflow organization
   const guideData = {
@@ -106,19 +110,71 @@ export function ContentGuide({ open, onClose, contentId }: ContentGuideProps) {
   const currentGuide = guideData[contentId as keyof typeof guideData] || guideData[1];
 
   const handleFileUpload = (requirementName: string) => {
-    // Simulate upload progress
-    let progress = 0;
-    const interval = setInterval(() => {
-      progress += 10;
-      setUploadProgress(prev => ({ ...prev, [requirementName]: progress }));
-      if (progress >= 100) {
-        clearInterval(interval);
-        setTimeout(() => {
-          setUploadProgress(prev => ({ ...prev, [requirementName]: 100 }));
-        }, 500);
+    // Create file input element
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = selectedFormat === 'photo' ? 'image/*' : 'video/*';
+    
+    input.onchange = (e) => {
+      const file = (e.target as HTMLInputElement).files?.[0];
+      if (file) {
+        // Store the uploaded file
+        setUploadedFiles(prev => ({ ...prev, [requirementName]: file }));
+        
+        // Simulate upload progress
+        let progress = 0;
+        const interval = setInterval(() => {
+          progress += 10;
+          setUploadProgress(prev => ({ ...prev, [requirementName]: progress }));
+          if (progress >= 100) {
+            clearInterval(interval);
+            toast.success(`${requirementName} uploaded successfully!`);
+          }
+        }, 200);
       }
-    }, 200);
+    };
+    
+    input.click();
   };
+
+  const handleStartCreating = () => {
+    const uploadedFilesList = Object.entries(uploadedFiles).map(([name, file]) => ({
+      name: file.name,
+      size: file.size,
+      type: file.type,
+      url: URL.createObjectURL(file),
+      requirement: name
+    }));
+    
+    if (uploadedFilesList.length > 0) {
+      // Store files and template info for the editor
+      sessionStorage.setItem('uploadedFiles', JSON.stringify(uploadedFilesList));
+      sessionStorage.setItem('selectedTemplate', contentId.toString());
+      sessionStorage.setItem('contentFormat', selectedFormat);
+      
+      navigate('/editor');
+      onClose();
+    } else {
+      toast.error("Please upload at least one clip before starting to create.");
+    }
+  };
+
+  const handleSaveDraft = () => {
+    const draftData = {
+      contentId,
+      selectedFormat,
+      uploadedFiles: Object.keys(uploadedFiles),
+      progress: uploadProgress,
+      timestamp: new Date().toISOString()
+    };
+    
+    localStorage.setItem(`draft_${contentId}`, JSON.stringify(draftData));
+    toast.success("Draft saved successfully!");
+  };
+
+  const allRequirementsComplete = currentGuide.requirements.every(req => 
+    uploadProgress[req.name] === 100
+  );
 
   return (
     <Dialog open={open} onOpenChange={() => onClose()}>
@@ -133,7 +189,10 @@ export function ContentGuide({ open, onClose, contentId }: ContentGuideProps) {
               selectedFormat={selectedFormat}
               onFormatChange={setSelectedFormat}
             />
-            <ContentStats />
+            <ContentStats 
+              uploadProgress={uploadProgress}
+              totalRequirements={currentGuide.requirements.length}
+            />
           </div>
 
           <ContentTabs 
@@ -153,11 +212,14 @@ export function ContentGuide({ open, onClose, contentId }: ContentGuideProps) {
             Close Guide
           </Button>
           <div className="flex gap-2">
-            <Button variant="outline">
+            <Button variant="outline" onClick={handleSaveDraft}>
               Save Draft
             </Button>
-            <Button>
-              Start Creating
+            <Button 
+              onClick={handleStartCreating}
+              disabled={!allRequirementsComplete}
+            >
+              Start Creating {allRequirementsComplete ? '✓' : `(${Object.keys(uploadedFiles).length}/${currentGuide.requirements.length})`}
             </Button>
           </div>
         </div>
