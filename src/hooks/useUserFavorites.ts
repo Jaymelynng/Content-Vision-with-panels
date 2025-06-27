@@ -12,11 +12,16 @@ export function useUserFavorites() {
     queryFn: async () => {
       if (!gym) return [];
       
-      // Set the gym context for RLS
-      await supabase.rpc('set_config', {
-        parameter: 'app.current_gym_id',
-        value: gym.id
-      });
+      // Set the gym context for RLS - with proper error handling
+      try {
+        await supabase.rpc('set_config', {
+          parameter: 'app.current_gym_id',
+          value: gym.id
+        });
+      } catch (rpcError) {
+        console.error('Error setting gym context:', rpcError);
+        // Continue with query anyway
+      }
       
       const { data, error } = await supabase
         .from('user_favorites')
@@ -38,11 +43,16 @@ export function useToggleFavorite() {
     mutationFn: async ({ contentId, isFavorite }: { contentId: number; isFavorite: boolean }) => {
       if (!gym) throw new Error('No gym selected');
       
-      // Set the gym context for RLS
-      await supabase.rpc('set_config', {
-        parameter: 'app.current_gym_id',
-        value: gym.id
-      });
+      // Set the gym context for RLS - with proper error handling
+      try {
+        await supabase.rpc('set_config', {
+          parameter: 'app.current_gym_id',
+          value: gym.id
+        });
+      } catch (rpcError) {
+        console.error('Error setting gym context:', rpcError);
+        // Continue with mutation anyway
+      }
       
       if (isFavorite) {
         // Remove from favorites

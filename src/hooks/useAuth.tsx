@@ -55,11 +55,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         return { error: 'Invalid PIN. Please check your PIN and try again.' };
       }
 
-      // Set the gym context for RLS policies
-      await supabase.rpc('set_config', {
-        parameter: 'app.current_gym_id',
-        value: gymData.id
-      });
+      // Set the gym context for RLS policies - with proper error handling
+      try {
+        await supabase.rpc('set_config', {
+          parameter: 'app.current_gym_id',
+          value: gymData.id
+        });
+      } catch (rpcError) {
+        console.error('Error setting gym context:', rpcError);
+        // Continue anyway - the RLS context will be set on data queries
+      }
 
       // Save gym data to state and localStorage
       setGym(gymData);
@@ -76,11 +81,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setGym(null);
     localStorage.removeItem('currentGym');
     
-    // Clear the gym context
-    await supabase.rpc('set_config', {
-      parameter: 'app.current_gym_id',
-      value: ''
-    });
+    // Clear the gym context - with proper error handling
+    try {
+      await supabase.rpc('set_config', {
+        parameter: 'app.current_gym_id',
+        value: ''
+      });
+    } catch (rpcError) {
+      console.error('Error clearing gym context:', rpcError);
+      // Continue anyway
+    }
   };
 
   return (

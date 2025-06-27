@@ -6,7 +6,7 @@ import { Link } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 
 const Index = () => {
-  const { user } = useAuth();
+  const { gym } = useAuth();
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100">
@@ -20,7 +20,7 @@ const Index = () => {
             Perfect for content creators, marketers, and businesses.
           </p>
           <div className="flex gap-4 justify-center">
-            {user ? (
+            {gym ? (
               <Link to="/content-library">
                 <Button size="lg" className="gap-2">
                   Go to Content Library
@@ -98,7 +98,7 @@ const Index = () => {
           </Card>
         </div>
 
-        {!user && (
+        {!gym && (
           <div className="text-center bg-white rounded-2xl p-12 shadow-sm">
             <h2 className="text-3xl font-bold mb-4">Ready to Start Creating?</h2>
             <p className="text-gray-600 mb-8 max-w-xl mx-auto">

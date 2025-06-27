@@ -68,13 +68,12 @@ export default function Auth() {
                 <Label htmlFor="pin">Gym PIN</Label>
                 <Input
                   id="pin"
-                  type="password"
+                  type="text"
                   value={pin}
-                  onChange={(e) => setPin(e.target.value)}
-                  placeholder="Enter your 4-digit PIN"
-                  maxLength={4}
+                  onChange={(e) => setPin(e.target.value.toUpperCase())}
+                  placeholder="Enter your gym PIN"
                   required
-                  className="text-center text-2xl tracking-widest"
+                  className="text-center text-lg tracking-widest"
                 />
               </div>
               <Button type="submit" className="w-full" disabled={loading}>
@@ -90,14 +89,26 @@ export default function Auth() {
           </Button>
         </div>
 
-        {/* Demo PINs for testing */}
+        {/* Updated with actual gym PINs */}
         <div className="text-center text-sm text-gray-500">
-          <p className="mb-2">Demo PINs for testing:</p>
-          <div className="space-y-1">
-            <p>Elite Gymnastics Academy: <span className="font-mono">1234</span></p>
-            <p>Champions Gym Center: <span className="font-mono">5678</span></p>
-            <p>Victory Athletics: <span className="font-mono">9999</span></p>
-            <p>Premier Gymnastics: <span className="font-mono">0000</span></p>
+          <p className="mb-2">Gym PINs:</p>
+          <div className="grid grid-cols-2 gap-2 text-xs">
+            <div className="space-y-1">
+              <p>Capital Gymnastics Pflugerville: <span className="font-mono">CPF</span></p>
+              <p>Capital Gymnastics Round Rock: <span className="font-mono">CRR</span></p>
+              <p>Capital Gymnastics Cedar Park: <span className="font-mono">CCP</span></p>
+              <p>Rowland Ballard Atascocita: <span className="font-mono">RBA</span></p>
+              <p>Rowland Ballard Kingwood: <span className="font-mono">RBK</span></p>
+              <p>Houston Gymnastics Academy: <span className="font-mono">HGA</span></p>
+            </div>
+            <div className="space-y-1">
+              <p>Estrella Gymnastics: <span className="font-mono">EST</span></p>
+              <p>Oasis Gymnastics: <span className="font-mono">OAS</span></p>
+              <p>Scottsdale Gymnastics: <span className="font-mono">SGT</span></p>
+              <p>Tigar Gymnastics: <span className="font-mono">TIG</span></p>
+              <p>Jayme (Owner Admin): <span className="font-mono">1426</span></p>
+              <p>Kim (Admin View): <span className="font-mono">2222</span></p>
+            </div>
           </div>
         </div>
       </div>
