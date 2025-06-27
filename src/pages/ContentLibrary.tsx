@@ -3,8 +3,9 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Search, Filter, Star, Play, Image, Instagram, Heart, CheckCircle2 } from "lucide-react";
+import { Search, Filter, Star, Play, Image, Instagram, Heart, CheckCircle2, Video, Camera } from "lucide-react";
 import { useState } from "react";
+
 const contentIdeas = [
 // Back-to-School Confidence Builders (Ideas 1-5)
 {
@@ -142,30 +143,29 @@ const getAudienceBadge = (audience: string) => {
       return null;
   }
 };
-const getDifficultyBadge = (difficulty: string) => {
-  switch (difficulty) {
-    case "easy":
-      return <Badge className="bg-green-100 text-green-800">Easy</Badge>;
-    case "medium":
-      return <Badge className="bg-amber-100 text-amber-800">Medium</Badge>;
-    case "hard":
-      return <Badge className="bg-red-100 text-red-800">Complex</Badge>;
+
+const getFormatBadge = (format: string) => {
+  switch (format) {
+    case "photo":
+      return <Badge className="bg-slate-100 text-slate-800 flex items-center gap-1">
+        <Camera className="h-3 w-3" />
+        Photo
+      </Badge>;
+    case "reel":
+      return <Badge className="bg-red-100 text-red-800 flex items-center gap-1">
+        <Video className="h-3 w-3" />
+        Reel
+      </Badge>;
+    case "story":
+      return <Badge className="bg-orange-100 text-orange-800 flex items-center gap-1">
+        <Instagram className="h-3 w-3" />
+        Story
+      </Badge>;
     default:
       return null;
   }
 };
-const getEngagementBadge = (engagement: string) => {
-  switch (engagement) {
-    case "very-high":
-      return <Badge className="bg-emerald-100 text-emerald-800">🔥 Viral</Badge>;
-    case "high":
-      return <Badge className="bg-green-100 text-green-800">📈 High</Badge>;
-    case "medium":
-      return <Badge className="bg-yellow-100 text-yellow-800">📊 Medium</Badge>;
-    default:
-      return null;
-  }
-};
+
 const getStatusIcon = (status: string) => {
   switch (status) {
     case "completed":
@@ -178,14 +178,22 @@ const getStatusIcon = (status: string) => {
       return null;
   }
 };
+
 const ContentLibrary = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [favorites, setFavorites] = useState<number[]>([]);
+  
   const toggleFavorite = (id: number) => {
     setFavorites(prev => prev.includes(id) ? prev.filter(fav => fav !== id) : [...prev, id]);
   };
-  const filteredContent = contentIdeas.filter(idea => idea.title.toLowerCase().includes(searchTerm.toLowerCase()) || idea.description.toLowerCase().includes(searchTerm.toLowerCase()));
-  return <div className="space-y-6">
+  
+  const filteredContent = contentIdeas.filter(idea => 
+    idea.title.toLowerCase().includes(searchTerm.toLowerCase()) || 
+    idea.description.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  return (
+    <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold tracking-tight">Content Library</h1>
@@ -204,11 +212,16 @@ const ContentLibrary = () => {
       {/* Search Bar */}
       <div className="relative max-w-md">
         <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-        <Input placeholder="Search content ideas..." value={searchTerm} onChange={e => setSearchTerm(e.target.value)} className="pl-10" />
+        <Input 
+          placeholder="Search content ideas..." 
+          value={searchTerm} 
+          onChange={(e) => setSearchTerm(e.target.value)} 
+          className="pl-10" 
+        />
       </div>
 
       <Tabs defaultValue="all" className="w-full">
-        <TabsList className="mb-6 border border-gray-200 bg-[#b48f8f]">
+        <TabsList className="mb-6">
           <TabsTrigger value="all">All Content</TabsTrigger>
           <TabsTrigger value="back-to-school">Back-to-School</TabsTrigger>
           <TabsTrigger value="skill-mastery">Skill Mastery</TabsTrigger>
@@ -219,15 +232,21 @@ const ContentLibrary = () => {
 
         <TabsContent value="all" className="mt-0">
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {filteredContent.map(idea => <Card key={idea.id} className="overflow-hidden hover:shadow-lg transition-shadow duration-200 group">
+            {filteredContent.map((idea) => (
+              <Card key={idea.id} className="overflow-hidden hover:shadow-lg transition-shadow duration-200 group">
                 <CardHeader className="p-0">
                   <div className="aspect-video bg-gradient-to-br from-slate-100 to-slate-200 relative overflow-hidden">
-                    <img src={idea.thumbnail} alt={idea.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200" />
-                    <div className="absolute top-2 right-2 flex gap-1">
-                      {getDifficultyBadge(idea.difficulty)}
-                    </div>
-                    <div className="absolute top-2 left-2">
-                      {getEngagementBadge(idea.engagement)}
+                    <img 
+                      src={idea.thumbnail} 
+                      alt={idea.title} 
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200" 
+                    />
+                    <div className="absolute top-2 left-2 flex flex-wrap gap-1">
+                      {idea.formats.map((format) => (
+                        <div key={format}>
+                          {getFormatBadge(format)}
+                        </div>
+                      ))}
                     </div>
                     <div className="absolute bottom-2 right-2 flex gap-1">
                       <div className="bg-white/90 backdrop-blur-sm rounded-full p-1">
@@ -247,7 +266,10 @@ const ContentLibrary = () => {
                     <CardTitle className="text-lg leading-tight">{idea.title}</CardTitle>
                     <div className="flex items-center gap-2">
                       {getStatusIcon(idea.status)}
-                      <button onClick={() => toggleFavorite(idea.id)} className="text-muted-foreground hover:text-red-500 transition-colors">
+                      <button 
+                        onClick={() => toggleFavorite(idea.id)} 
+                        className="text-muted-foreground hover:text-red-500 transition-colors"
+                      >
                         <Heart className={`h-4 w-4 ${favorites.includes(idea.id) ? 'fill-red-500 text-red-500' : ''}`} />
                       </button>
                     </div>
@@ -255,17 +277,23 @@ const ContentLibrary = () => {
                   <p className="text-muted-foreground text-sm mb-3 line-clamp-2">{idea.description}</p>
                   
                   <div className="flex flex-wrap gap-1 mb-3">
-                    {idea.targetAudience.map(audience => <div key={audience}>
+                    {idea.targetAudience.map((audience) => (
+                      <div key={audience}>
                         {getAudienceBadge(audience)}
-                      </div>)}
+                      </div>
+                    ))}
                   </div>
 
                   <div className="text-xs text-muted-foreground space-y-1">
                     <div className="flex flex-wrap gap-1">
-                      {idea.features.slice(0, 2).map(feature => <span key={feature} className="bg-slate-100 px-2 py-0.5 rounded text-xs">
+                      {idea.features.slice(0, 2).map((feature) => (
+                        <span key={feature} className="bg-slate-100 px-2 py-0.5 rounded text-xs">
                           {feature}
-                        </span>)}
-                      {idea.features.length > 2 && <span className="text-xs text-muted-foreground">+{idea.features.length - 2} more</span>}
+                        </span>
+                      ))}
+                      {idea.features.length > 2 && (
+                        <span className="text-xs text-muted-foreground">+{idea.features.length - 2} more</span>
+                      )}
                     </div>
                   </div>
                 </CardContent>
@@ -277,21 +305,31 @@ const ContentLibrary = () => {
                     Create
                   </Button>
                 </CardFooter>
-              </Card>)}
+              </Card>
+            ))}
           </div>
         </TabsContent>
 
-        {["back-to-school", "skill-mastery", "behind-the-scenes", "community", "gaming"].map(category => <TabsContent key={category} value={category} className="mt-0">
+        {["back-to-school", "skill-mastery", "behind-the-scenes", "community", "gaming"].map((category) => (
+          <TabsContent key={category} value={category} className="mt-0">
             <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-              {filteredContent.filter(idea => idea.category === category).map(idea => <Card key={idea.id} className="overflow-hidden hover:shadow-lg transition-shadow duration-200 group">
+              {filteredContent
+                .filter((idea) => idea.category === category)
+                .map((idea) => (
+                  <Card key={idea.id} className="overflow-hidden hover:shadow-lg transition-shadow duration-200 group">
                     <CardHeader className="p-0">
                       <div className="aspect-video bg-gradient-to-br from-slate-100 to-slate-200 relative overflow-hidden">
-                        <img src={idea.thumbnail} alt={idea.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200" />
-                        <div className="absolute top-2 right-2 flex gap-1">
-                          {getDifficultyBadge(idea.difficulty)}
-                        </div>
-                        <div className="absolute top-2 left-2">
-                          {getEngagementBadge(idea.engagement)}
+                        <img 
+                          src={idea.thumbnail} 
+                          alt={idea.title} 
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200" 
+                        />
+                        <div className="absolute top-2 left-2 flex flex-wrap gap-1">
+                          {idea.formats.map((format) => (
+                            <div key={format}>
+                              {getFormatBadge(format)}
+                            </div>
+                          ))}
                         </div>
                         <div className="absolute bottom-2 right-2 flex gap-1">
                           <div className="bg-white/90 backdrop-blur-sm rounded-full p-1">
@@ -311,7 +349,10 @@ const ContentLibrary = () => {
                         <CardTitle className="text-lg leading-tight">{idea.title}</CardTitle>
                         <div className="flex items-center gap-2">
                           {getStatusIcon(idea.status)}
-                          <button onClick={() => toggleFavorite(idea.id)} className="text-muted-foreground hover:text-red-500 transition-colors">
+                          <button 
+                            onClick={() => toggleFavorite(idea.id)} 
+                            className="text-muted-foreground hover:text-red-500 transition-colors"
+                          >
                             <Heart className={`h-4 w-4 ${favorites.includes(idea.id) ? 'fill-red-500 text-red-500' : ''}`} />
                           </button>
                         </div>
@@ -319,17 +360,23 @@ const ContentLibrary = () => {
                       <p className="text-muted-foreground text-sm mb-3 line-clamp-2">{idea.description}</p>
                       
                       <div className="flex flex-wrap gap-1 mb-3">
-                        {idea.targetAudience.map(audience => <div key={audience}>
+                        {idea.targetAudience.map((audience) => (
+                          <div key={audience}>
                             {getAudienceBadge(audience)}
-                          </div>)}
+                          </div>
+                        ))}
                       </div>
 
                       <div className="text-xs text-muted-foreground space-y-1">
                         <div className="flex flex-wrap gap-1">
-                          {idea.features.slice(0, 2).map(feature => <span key={feature} className="bg-slate-100 px-2 py-0.5 rounded text-xs">
+                          {idea.features.slice(0, 2).map((feature) => (
+                            <span key={feature} className="bg-slate-100 px-2 py-0.5 rounded text-xs">
                               {feature}
-                            </span>)}
-                          {idea.features.length > 2 && <span className="text-xs text-muted-foreground">+{idea.features.length - 2} more</span>}
+                            </span>
+                          ))}
+                          {idea.features.length > 2 && (
+                            <span className="text-xs text-muted-foreground">+{idea.features.length - 2} more</span>
+                          )}
                         </div>
                       </div>
                     </CardContent>
@@ -341,10 +388,14 @@ const ContentLibrary = () => {
                         Create
                       </Button>
                     </CardFooter>
-                  </Card>)}
+                  </Card>
+                ))}
             </div>
-          </TabsContent>)}
+          </TabsContent>
+        ))}
       </Tabs>
-    </div>;
+    </div>
+  );
 };
+
 export default ContentLibrary;
