@@ -57,7 +57,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
       // Set the gym context for RLS policies - with proper error handling
       try {
-        await supabase.rpc('set_config', {
+        await (supabase as any).rpc('set_config', {
           parameter: 'app.current_gym_id',
           value: gymData.id
         });
@@ -83,7 +83,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     
     // Clear the gym context - with proper error handling
     try {
-      await supabase.rpc('set_config', {
+      await (supabase as any).rpc('set_config', {
         parameter: 'app.current_gym_id',
         value: ''
       });

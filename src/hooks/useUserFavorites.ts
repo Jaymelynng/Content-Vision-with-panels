@@ -14,7 +14,7 @@ export function useUserFavorites() {
       
       // Set the gym context for RLS - with proper error handling
       try {
-        await supabase.rpc('set_config', {
+        await (supabase as any).rpc('set_config', {
           parameter: 'app.current_gym_id',
           value: gym.id
         });
@@ -45,7 +45,7 @@ export function useToggleFavorite() {
       
       // Set the gym context for RLS - with proper error handling
       try {
-        await supabase.rpc('set_config', {
+        await (supabase as any).rpc('set_config', {
           parameter: 'app.current_gym_id',
           value: gym.id
         });
