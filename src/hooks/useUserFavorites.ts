@@ -1,53 +1,71 @@
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
+import { useAuth } from '@/hooks/useAuth';
 import { toast } from 'sonner';
 
 export function useUserFavorites() {
+  const { gym } = useAuth();
+  
   return useQuery({
-    queryKey: ['user-favorites'],
+    queryKey: ['user-favorites', gym?.id],
     queryFn: async () => {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) return [];
+      if (!gym) return [];
+      
+      // Set the gym context for RLS
+      await supabase.rpc('set_config', {
+        parameter: 'app.current_gym_id',
+        value: gym.id
+      });
       
       const { data, error } = await supabase
         .from('user_favorites')
         .select('content_id')
-        .eq('user_id', user.id);
+        .eq('gym_id', gym.id);
       
       if (error) throw error;
-      return data.map(fav => fav.content_id);
+      return data?.map(item => item.content_id) || [];
     },
+    enabled: !!gym,
   });
 }
 
 export function useToggleFavorite() {
   const queryClient = useQueryClient();
+  const { gym } = useAuth();
   
   return useMutation({
     mutationFn: async ({ contentId, isFavorite }: { contentId: number; isFavorite: boolean }) => {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) throw new Error('Must be logged in');
+      if (!gym) throw new Error('No gym selected');
+      
+      // Set the gym context for RLS
+      await supabase.rpc('set_config', {
+        parameter: 'app.current_gym_id',
+        value: gym.id
+      });
       
       if (isFavorite) {
+        // Remove from favorites
         const { error } = await supabase
           .from('user_favorites')
           .delete()
-          .eq('user_id', user.id)
-          .eq('content_id', contentId);
+          .eq('content_id', contentId)
+          .eq('gym_id', gym.id);
         if (error) throw error;
       } else {
+        // Add to favorites
         const { error } = await supabase
           .from('user_favorites')
-          .insert({ user_id: user.id, content_id: contentId });
+          .insert({ content_id: contentId, gym_id: gym.id });
         if (error) throw error;
       }
     },
-    onSuccess: () => {
+    onSuccess: (_, { isFavorite }) => {
       queryClient.invalidateQueries({ queryKey: ['user-favorites'] });
+      toast.success(isFavorite ? 'Removed from favorites' : 'Added to favorites');
     },
     onError: (error) => {
-      toast.error('Failed to update favorite: ' + error.message);
+      toast.error('Failed to update favorites: ' + error.message);
     },
   });
 }

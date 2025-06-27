@@ -72,11 +72,42 @@ export type Database = {
         }
         Relationships: []
       }
+      gym_profiles: {
+        Row: {
+          active: boolean | null
+          created_at: string | null
+          gym_location: string | null
+          gym_name: string
+          id: string
+          pin_code: string
+          updated_at: string | null
+        }
+        Insert: {
+          active?: boolean | null
+          created_at?: string | null
+          gym_location?: string | null
+          gym_name: string
+          id?: string
+          pin_code: string
+          updated_at?: string | null
+        }
+        Update: {
+          active?: boolean | null
+          created_at?: string | null
+          gym_location?: string | null
+          gym_name?: string
+          id?: string
+          pin_code?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       user_content_progress: {
         Row: {
           content_id: number | null
           created_at: string | null
           draft_data: Json | null
+          gym_id: string | null
           id: string
           selected_format: string
           status: string | null
@@ -89,6 +120,7 @@ export type Database = {
           content_id?: number | null
           created_at?: string | null
           draft_data?: Json | null
+          gym_id?: string | null
           id?: string
           selected_format: string
           status?: string | null
@@ -101,6 +133,7 @@ export type Database = {
           content_id?: number | null
           created_at?: string | null
           draft_data?: Json | null
+          gym_id?: string | null
           id?: string
           selected_format?: string
           status?: string | null
@@ -117,24 +150,34 @@ export type Database = {
             referencedRelation: "content_ideas"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "user_content_progress_gym_id_fkey"
+            columns: ["gym_id"]
+            isOneToOne: false
+            referencedRelation: "gym_profiles"
+            referencedColumns: ["id"]
+          },
         ]
       }
       user_favorites: {
         Row: {
           content_id: number | null
           created_at: string | null
+          gym_id: string | null
           id: string
           user_id: string | null
         }
         Insert: {
           content_id?: number | null
           created_at?: string | null
+          gym_id?: string | null
           id?: string
           user_id?: string | null
         }
         Update: {
           content_id?: number | null
           created_at?: string | null
+          gym_id?: string | null
           id?: string
           user_id?: string | null
         }
@@ -144,6 +187,13 @@ export type Database = {
             columns: ["content_id"]
             isOneToOne: false
             referencedRelation: "content_ideas"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "user_favorites_gym_id_fkey"
+            columns: ["gym_id"]
+            isOneToOne: false
+            referencedRelation: "gym_profiles"
             referencedColumns: ["id"]
           },
         ]

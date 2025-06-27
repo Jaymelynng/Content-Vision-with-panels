@@ -1,65 +1,90 @@
 
 import { createContext, useContext, useEffect, useState } from 'react';
-import { User, Session } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
 
+interface GymProfile {
+  id: string;
+  gym_name: string;
+  gym_location: string;
+  pin_code: string;
+  active: boolean;
+}
+
 interface AuthContextType {
-  user: User | null;
-  session: Session | null;
+  gym: GymProfile | null;
   loading: boolean;
-  signIn: (email: string, password: string) => Promise<{ error?: string }>;
-  signUp: (email: string, password: string) => Promise<{ error?: string }>;
+  signInWithPin: (pin: string) => Promise<{ error?: string }>;
   signOut: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [user, setUser] = useState<User | null>(null);
-  const [session, setSession] = useState<Session | null>(null);
+  const [gym, setGym] = useState<GymProfile | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Set up auth state listener
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (event, session) => {
-        setSession(session);
-        setUser(session?.user ?? null);
-        setLoading(false);
+    // Check for existing gym session
+    const savedGym = localStorage.getItem('currentGym');
+    if (savedGym) {
+      try {
+        const gymData = JSON.parse(savedGym);
+        setGym(gymData);
+      } catch (error) {
+        console.error('Error parsing saved gym data:', error);
+        localStorage.removeItem('currentGym');
       }
-    );
-
-    // Check for existing session
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-      setUser(session?.user ?? null);
-      setLoading(false);
-    });
-
-    return () => subscription.unsubscribe();
+    }
+    setLoading(false);
   }, []);
 
-  const signIn = async (email: string, password: string) => {
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
-    return { error: error?.message };
-  };
+  const signInWithPin = async (pin: string) => {
+    try {
+      const { data: gymData, error } = await supabase
+        .from('gym_profiles')
+        .select('*')
+        .eq('pin_code', pin)
+        .eq('active', true)
+        .single();
 
-  const signUp = async (email: string, password: string) => {
-    const redirectUrl = `${window.location.origin}/`;
-    const { error } = await supabase.auth.signUp({
-      email,
-      password,
-      options: { emailRedirectTo: redirectUrl }
-    });
-    return { error: error?.message };
+      if (error) {
+        return { error: 'Invalid PIN. Please check your PIN and try again.' };
+      }
+
+      if (!gymData) {
+        return { error: 'Invalid PIN. Please check your PIN and try again.' };
+      }
+
+      // Set the gym context for RLS policies
+      await supabase.rpc('set_config', {
+        parameter: 'app.current_gym_id',
+        value: gymData.id
+      });
+
+      // Save gym data to state and localStorage
+      setGym(gymData);
+      localStorage.setItem('currentGym', JSON.stringify(gymData));
+
+      return {};
+    } catch (error) {
+      console.error('Sign in error:', error);
+      return { error: 'An error occurred during sign in. Please try again.' };
+    }
   };
 
   const signOut = async () => {
-    await supabase.auth.signOut();
+    setGym(null);
+    localStorage.removeItem('currentGym');
+    
+    // Clear the gym context
+    await supabase.rpc('set_config', {
+      parameter: 'app.current_gym_id',
+      value: ''
+    });
   };
 
   return (
-    <AuthContext.Provider value={{ user, session, loading, signIn, signUp, signOut }}>
+    <AuthContext.Provider value={{ gym, loading, signInWithPin, signOut }}>
       {children}
     </AuthContext.Provider>
   );

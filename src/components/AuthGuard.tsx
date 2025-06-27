@@ -7,7 +7,7 @@ interface AuthGuardProps {
 }
 
 export function AuthGuard({ children }: AuthGuardProps) {
-  const { user, loading } = useAuth();
+  const { gym, loading } = useAuth();
 
   if (loading) {
     return (
@@ -20,7 +20,7 @@ export function AuthGuard({ children }: AuthGuardProps) {
     );
   }
 
-  if (!user) {
+  if (!gym) {
     return <Navigate to="/auth" replace />;
   }
 
