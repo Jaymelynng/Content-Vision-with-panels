@@ -12,16 +12,6 @@ export function useExtractedContent() {
     queryFn: async () => {
       if (!gym) return [];
 
-      // Set gym context
-      try {
-        await (supabase as any).rpc('set_config', {
-          parameter: 'app.current_gym_id',
-          value: gym.id
-        });
-      } catch (error) {
-        console.error('Error setting gym context:', error);
-      }
-
       const { data, error } = await supabase
         .from('extracted_content_ideas')
         .select('*')
