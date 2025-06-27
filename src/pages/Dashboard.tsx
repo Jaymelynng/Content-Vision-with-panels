@@ -17,6 +17,9 @@ const Dashboard = () => {
           </p>
         </div>
         <div className="flex items-center gap-2">
+          <Button asChild variant="outline">
+            <Link to="/content-library">Browse Content Library</Link>
+          </Button>
           <Button asChild>
             <Link to="/upload">Upload New Content</Link>
           </Button>
@@ -45,18 +48,20 @@ const Dashboard = () => {
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium">Pending Approvals</CardTitle>
+            <CardTitle className="text-sm font-medium">Content Ideas Ready</CardTitle>
             <BarChart3 className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">3</div>
+            <div className="text-2xl font-bold">25</div>
             <p className="text-xs text-muted-foreground">
-              -1 from last week
+              High-performance strategies
             </p>
-            <div className="mt-4 grid grid-cols-3 gap-1">
-              <div className="h-1.5 rounded-sm bg-amber-400"></div>
-              <div className="h-1.5 rounded-sm bg-amber-400"></div>
-              <div className="h-1.5 rounded-sm bg-amber-400"></div>
+            <div className="mt-4 grid grid-cols-5 gap-1">
+              <div className="h-1.5 rounded-sm bg-green-400"></div>
+              <div className="h-1.5 rounded-sm bg-green-400"></div>
+              <div className="h-1.5 rounded-sm bg-green-400"></div>
+              <div className="h-1.5 rounded-sm bg-green-400"></div>
+              <div className="h-1.5 rounded-sm bg-green-400"></div>
             </div>
           </CardContent>
         </Card>

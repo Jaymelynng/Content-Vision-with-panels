@@ -5,7 +5,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Dashboard from "./pages/Dashboard";
-import Templates from "./pages/Templates";
+import ContentLibrary from "./pages/ContentLibrary";
 import ContentUpload from "./pages/ContentUpload";
 import Editor from "./pages/Editor";
 import Preview from "./pages/Preview";
@@ -24,7 +24,7 @@ const App = () => (
         <Routes>
           <Route path="/" element={<AppLayout />}>
             <Route index element={<Dashboard />} />
-            <Route path="templates" element={<Templates />} />
+            <Route path="content-library" element={<ContentLibrary />} />
             <Route path="upload" element={<ContentUpload />} />
             <Route path="editor" element={<Editor />} />
             <Route path="preview" element={<Preview />} />

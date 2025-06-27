@@ -1,6 +1,6 @@
 
 import { Link, useLocation } from "react-router-dom";
-import { Calendar, LayoutDashboard, Upload, PlaySquare, Settings, Package } from "lucide-react";
+import { Calendar, LayoutDashboard, Upload, PlaySquare, Settings, BookOpen } from "lucide-react";
 import { cn } from "@/lib/utils";
 import {
   SidebarGroup,
@@ -18,9 +18,9 @@ const navItems = [
     icon: LayoutDashboard,
   },
   {
-    title: "Templates",
-    href: "/templates",
-    icon: Package,
+    title: "Content Library",
+    href: "/content-library",
+    icon: BookOpen,
   },
   {
     title: "Upload Content",
