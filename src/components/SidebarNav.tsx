@@ -1,6 +1,6 @@
 
 import { Link, useLocation } from "react-router-dom";
-import { Calendar, LayoutDashboard, Upload, PlaySquare, Settings, BookOpen } from "lucide-react";
+import { Calendar, LayoutDashboard, Upload, Settings, BookOpen } from "lucide-react";
 import { cn } from "@/lib/utils";
 import {
   SidebarGroup,
@@ -27,11 +27,12 @@ const navItems = [
     href: "/upload",
     icon: Upload,
   },
-  {
-    title: "Video Editor",
-    href: "/editor",
-    icon: PlaySquare,
-  },
+  // Video Editor temporarily removed - see FUTURE_FEATURES.md
+  // {
+  //   title: "Video Editor",
+  //   href: "/editor",
+  //   icon: PlaySquare,
+  // },
   {
     title: "Calendar",
     href: "/calendar",

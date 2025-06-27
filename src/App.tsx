@@ -7,7 +7,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Dashboard from "./pages/Dashboard";
 import ContentLibrary from "./pages/ContentLibrary";
 import ContentUpload from "./pages/ContentUpload";
-import Editor from "./pages/Editor";
+// import Editor from "./pages/Editor"; // Temporarily disabled - see FUTURE_FEATURES.md
 import Preview from "./pages/Preview";
 import Settings from "./pages/Settings";
 import NotFound from "./pages/NotFound";
@@ -26,7 +26,8 @@ const App = () => (
             <Route index element={<Dashboard />} />
             <Route path="content-library" element={<ContentLibrary />} />
             <Route path="upload" element={<ContentUpload />} />
-            <Route path="editor" element={<Editor />} />
+            {/* Video Editor temporarily disabled - see FUTURE_FEATURES.md */}
+            {/* <Route path="editor" element={<Editor />} /> */}
             <Route path="preview" element={<Preview />} />
             <Route path="settings" element={<Settings />} />
             <Route path="*" element={<NotFound />} />
