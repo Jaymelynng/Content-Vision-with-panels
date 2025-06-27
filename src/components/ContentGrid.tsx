@@ -1,0 +1,39 @@
+
+import ContentCard from "./ContentCard";
+
+interface ContentIdea {
+  id: number;
+  title: string;
+  description: string;
+  category: string;
+  targetAudience: string[];
+  formats: string[];
+  difficulty: string;
+  engagement: string;
+  status: string;
+  thumbnail: string;
+  features: string[];
+}
+
+interface ContentGridProps {
+  ideas: ContentIdea[];
+  favorites: number[];
+  onToggleFavorite: (id: number) => void;
+}
+
+const ContentGrid = ({ ideas, favorites, onToggleFavorite }: ContentGridProps) => {
+  return (
+    <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+      {ideas.map((idea) => (
+        <ContentCard
+          key={idea.id}
+          idea={idea}
+          isFavorite={favorites.includes(idea.id)}
+          onToggleFavorite={onToggleFavorite}
+        />
+      ))}
+    </div>
+  );
+};
+
+export default ContentGrid;
