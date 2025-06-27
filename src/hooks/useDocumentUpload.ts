@@ -4,6 +4,16 @@ import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { toast } from 'sonner';
 
+// Function to sanitize file names for storage
+const sanitizeFileName = (fileName: string): string => {
+  // Remove or replace invalid characters
+  return fileName
+    .replace(/[^\w\s.-]/g, '') // Remove all non-word characters except spaces, dots, and hyphens
+    .replace(/\s+/g, '_') // Replace spaces with underscores
+    .replace(/_{2,}/g, '_') // Replace multiple underscores with single underscore
+    .trim();
+};
+
 export function useDocumentUpload() {
   const { gym } = useAuth();
   const queryClient = useQueryClient();
@@ -22,20 +32,25 @@ export function useDocumentUpload() {
         console.error('Error setting gym context:', error);
       }
 
-      // Upload file to storage
-      const fileName = `${gym.id}/${Date.now()}_${file.name}`;
+      // Sanitize the file name
+      const sanitizedFileName = sanitizeFileName(file.name);
+      console.log('Original filename:', file.name);
+      console.log('Sanitized filename:', sanitizedFileName);
+
+      // Upload file to storage with sanitized name
+      const fileName = `${gym.id}/${Date.now()}_${sanitizedFileName}`;
       const { data: uploadData, error: uploadError } = await supabase.storage
         .from('documents')
         .upload(fileName, file);
 
       if (uploadError) throw uploadError;
 
-      // Create document record
+      // Create document record with original filename for display
       const { data, error } = await supabase
         .from('uploaded_documents')
         .insert({
           gym_id: gym.id,
-          filename: file.name,
+          filename: file.name, // Keep original name for display
           file_path: uploadData.path,
           file_size: file.size,
           file_type: file.type || 'application/octet-stream',
@@ -51,6 +66,7 @@ export function useDocumentUpload() {
       toast.success('Document uploaded successfully!');
     },
     onError: (error) => {
+      console.error('Upload error:', error);
       toast.error('Failed to upload document: ' + error.message);
     },
   });
