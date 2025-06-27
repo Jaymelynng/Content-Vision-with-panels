@@ -1,4 +1,3 @@
-
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -17,12 +16,10 @@ const contentIdeas = [
     targetAudience: ["premium", "growth"],
     formats: ["photo", "reel", "story"],
     difficulty: "easy",
-    implementationTime: "15-20 min",
     engagement: "high",
     status: "not-started",
     thumbnail: "/placeholder.svg",
-    features: ["Interactive Riddle", "Challenge Tracker", "Motion Graphics"],
-    expectedResults: "300-500% engagement increase"
+    features: ["Interactive Riddle", "Challenge Tracker", "Motion Graphics"]
   },
   {
     id: 2,
@@ -32,12 +29,10 @@ const contentIdeas = [
     targetAudience: ["premium", "growth", "value"],
     formats: ["photo", "reel", "story"],
     difficulty: "easy",
-    implementationTime: "10-15 min",
     engagement: "high",
     status: "not-started",
     thumbnail: "/placeholder.svg",
-    features: ["Spot the Difference", "Counter Challenge", "Confidence Tracking"],
-    expectedResults: "600% comment participation increase"
+    features: ["Spot the Difference", "Counter Challenge", "Confidence Tracking"]
   },
   {
     id: 3,
@@ -47,12 +42,10 @@ const contentIdeas = [
     targetAudience: ["premium", "growth"],
     formats: ["photo", "reel", "story"],
     difficulty: "medium",
-    implementationTime: "20-25 min",
     engagement: "medium",
     status: "not-started",
     thumbnail: "/placeholder.svg",
-    features: ["Motion Analysis", "Home Challenge", "Progress Tracker"],
-    expectedResults: "400% story completion increase"
+    features: ["Motion Analysis", "Home Challenge", "Progress Tracker"]
   },
   {
     id: 4,
@@ -62,12 +55,10 @@ const contentIdeas = [
     targetAudience: ["premium", "growth"],
     formats: ["photo", "reel", "story"],
     difficulty: "medium",
-    implementationTime: "15-20 min",
     engagement: "high",
     status: "not-started",
     thumbnail: "/placeholder.svg",
-    features: ["Strength Challenge", "Progress Visualization", "Benefits Breakdown"],
-    expectedResults: "Weekly strength challenge winners"
+    features: ["Strength Challenge", "Progress Visualization", "Benefits Breakdown"]
   },
   {
     id: 5,
@@ -77,12 +68,10 @@ const contentIdeas = [
     targetAudience: ["premium", "growth", "value"],
     formats: ["photo", "reel", "story"],
     difficulty: "easy",
-    implementationTime: "15-20 min",
     engagement: "medium",
     status: "not-started",
     thumbnail: "/placeholder.svg",
-    features: ["Progression Puzzle", "Safety Tips", "Flexibility Challenge"],
-    expectedResults: "Safe stretching community building"
+    features: ["Progression Puzzle", "Safety Tips", "Flexibility Challenge"]
   },
   // Skill Mastery Showcases (Ideas 6-10)
   {
@@ -93,12 +82,10 @@ const contentIdeas = [
     targetAudience: ["premium"],
     formats: ["photo", "reel", "story"],
     difficulty: "hard",
-    implementationTime: "25-30 min",
     engagement: "high",
     status: "not-started",
     thumbnail: "/placeholder.svg",
-    features: ["Skill Puzzle", "Level-Up Graphics", "Progress Journey"],
-    expectedResults: "Advanced skills enrollment boost"
+    features: ["Skill Puzzle", "Level-Up Graphics", "Progress Journey"]
   },
   {
     id: 7,
@@ -108,12 +95,10 @@ const contentIdeas = [
     targetAudience: ["premium"],
     formats: ["photo", "reel", "story"],
     difficulty: "hard",
-    implementationTime: "20-25 min",
     engagement: "medium",
     status: "not-started",
     thumbnail: "/placeholder.svg",
-    features: ["Motion Analysis", "Angle Graphics", "Cross-Training Connections"],
-    expectedResults: "Technical excellence authority"
+    features: ["Motion Analysis", "Angle Graphics", "Cross-Training Connections"]
   },
   {
     id: 8,
@@ -123,12 +108,10 @@ const contentIdeas = [
     targetAudience: ["premium", "growth"],
     formats: ["photo", "reel", "story"],
     difficulty: "medium",
-    implementationTime: "15-20 min",
     engagement: "high",
     status: "not-started",
     thumbnail: "/placeholder.svg",
-    features: ["Counter Challenge", "Technique Analysis", "Progression Path"],
-    expectedResults: "Tumbling program interest increase"
+    features: ["Counter Challenge", "Technique Analysis", "Progression Path"]
   },
   {
     id: 9,
@@ -138,12 +121,10 @@ const contentIdeas = [
     targetAudience: ["premium", "growth", "value"],
     formats: ["photo", "reel", "story"],
     difficulty: "easy",
-    implementationTime: "10-15 min",
     engagement: "very-high",
     status: "not-started",
     thumbnail: "/placeholder.svg",
-    features: ["Achievement Tracker", "Hero Badges", "Leaderboard"],
-    expectedResults: "Monthly hero recognition ceremony"
+    features: ["Achievement Tracker", "Hero Badges", "Leaderboard"]
   },
   {
     id: 10,
@@ -153,12 +134,10 @@ const contentIdeas = [
     targetAudience: ["premium", "growth"],
     formats: ["photo", "reel", "story"],
     difficulty: "medium",
-    implementationTime: "15-20 min",
     engagement: "medium",
     status: "not-started",
     thumbnail: "/placeholder.svg",
-    features: ["Grace Challenge", "Sport Connections", "Artistic Expression"],
-    expectedResults: "Dance gymnastics enrollment"
+    features: ["Grace Challenge", "Sport Connections", "Artistic Expression"]
   }
 ];
 
@@ -323,8 +302,6 @@ const ContentLibrary = () => {
                   </div>
 
                   <div className="text-xs text-muted-foreground space-y-1">
-                    <div>⏱️ {idea.implementationTime}</div>
-                    <div>🎯 {idea.expectedResults}</div>
                     <div className="flex flex-wrap gap-1">
                       {idea.features.slice(0, 2).map(feature => (
                         <span key={feature} className="bg-slate-100 px-2 py-0.5 rounded text-xs">
@@ -407,8 +384,6 @@ const ContentLibrary = () => {
                       </div>
 
                       <div className="text-xs text-muted-foreground space-y-1">
-                        <div>⏱️ {idea.implementationTime}</div>
-                        <div>🎯 {idea.expectedResults}</div>
                         <div className="flex flex-wrap gap-1">
                           {idea.features.slice(0, 2).map(feature => (
                             <span key={feature} className="bg-slate-100 px-2 py-0.5 rounded text-xs">
