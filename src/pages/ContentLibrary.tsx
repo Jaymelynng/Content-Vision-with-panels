@@ -208,7 +208,7 @@ const ContentLibrary = () => {
       </div>
 
       <Tabs defaultValue="all" className="w-full">
-        <TabsList className="mb-6 bg-[#b48f8f]">
+        <TabsList className="mb-6 bg-white border border-gray-200">
           <TabsTrigger value="all">All Content</TabsTrigger>
           <TabsTrigger value="back-to-school">Back-to-School</TabsTrigger>
           <TabsTrigger value="skill-mastery">Skill Mastery</TabsTrigger>
