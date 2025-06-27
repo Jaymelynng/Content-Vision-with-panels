@@ -7,7 +7,7 @@ import TopBar from "@/components/TopBar";
 const AppLayout = () => {
   return (
     <SidebarProvider>
-      <div className="min-h-screen flex w-full bg-slate-50">
+      <div className="min-h-screen flex w-full bg-rose-50">
         <AppSidebar />
         <div className="flex-1 flex flex-col">
           <TopBar />

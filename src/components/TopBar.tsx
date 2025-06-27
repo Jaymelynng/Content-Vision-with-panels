@@ -14,14 +14,14 @@ const TopBar = () => {
           <Input
             type="search"
             placeholder="Search..."
-            className="w-72 pl-8 bg-slate-50"
+            className="w-72 pl-8 bg-rose-50"
           />
         </div>
       </div>
       <div className="flex items-center gap-4">
         <Button variant="outline" size="icon" className="relative">
           <Bell className="h-4 w-4" />
-          <span className="absolute top-0 right-0 w-2 h-2 bg-red-500 rounded-full"></span>
+          <span className="absolute top-0 right-0 w-2 h-2 bg-rose-500 rounded-full"></span>
         </Button>
       </div>
     </div>
