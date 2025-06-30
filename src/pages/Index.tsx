@@ -1,7 +1,7 @@
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { ArrowRight, Sparkles, Video, Zap } from "lucide-react";
+import { ArrowRight, Dumbbell, Library, Shield, Users } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 
@@ -13,11 +13,11 @@ const Index = () => {
       <div className="container mx-auto px-4 py-16">
         <div className="text-center mb-16">
           <h1 className="text-5xl font-bold mb-6 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-            Create Amazing Content with AI
+            Gym Content Management System
           </h1>
           <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
-            Transform your ideas into engaging content with our AI-powered creation tools. 
-            Perfect for content creators, marketers, and businesses.
+            Streamline your gym's content strategy with our comprehensive management platform. 
+            Perfect for fitness centers, personal trainers, and gym administrators.
           </p>
           <div className="flex gap-4 justify-center">
             {gym ? (
@@ -31,7 +31,7 @@ const Index = () => {
               <>
                 <Link to="/auth">
                   <Button size="lg" className="gap-2">
-                    Get Started
+                    Access Your Content
                     <ArrowRight className="h-5 w-5" />
                   </Button>
                 </Link>
@@ -49,16 +49,16 @@ const Index = () => {
           <Card className="hover:shadow-lg transition-shadow">
             <CardHeader>
               <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mb-4">
-                <Sparkles className="h-6 w-6 text-blue-600" />
+                <Library className="h-6 w-6 text-blue-600" />
               </div>
-              <CardTitle>AI-Powered Creation</CardTitle>
+              <CardTitle>Content Library</CardTitle>
               <CardDescription>
-                Let AI guide your content creation process with intelligent suggestions and templates
+                Access a comprehensive library of fitness content ideas and templates
               </CardDescription>
             </CardHeader>
             <CardContent>
               <p className="text-gray-600">
-                Get personalized content ideas based on your niche and audience preferences.
+                Browse workout ideas, nutrition tips, and engagement strategies tailored for your gym.
               </p>
             </CardContent>
           </Card>
@@ -66,16 +66,16 @@ const Index = () => {
           <Card className="hover:shadow-lg transition-shadow">
             <CardHeader>
               <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center mb-4">
-                <Video className="h-6 w-6 text-purple-600" />
+                <Dumbbell className="h-6 w-6 text-purple-600" />
               </div>
-              <CardTitle>Professional Templates</CardTitle>
+              <CardTitle>Fitness Templates</CardTitle>
               <CardDescription>
-                Access a library of proven content templates for different platforms and goals
+                Professional templates designed specifically for gyms and fitness businesses
               </CardDescription>
             </CardHeader>
             <CardContent>
               <p className="text-gray-600">
-                From TikTok reels to Instagram posts, we have templates that convert.
+                From social media posts to workout guides, get templates that drive member engagement.
               </p>
             </CardContent>
           </Card>
@@ -83,16 +83,16 @@ const Index = () => {
           <Card className="hover:shadow-lg transition-shadow">
             <CardHeader>
               <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mb-4">
-                <Zap className="h-6 w-6 text-green-600" />
+                <Users className="h-6 w-6 text-green-600" />
               </div>
-              <CardTitle>Quick & Easy</CardTitle>
+              <CardTitle>Member Engagement</CardTitle>
               <CardDescription>
-                Create professional content in minutes, not hours
+                Tools and strategies to keep your gym members motivated and engaged
               </CardDescription>
             </CardHeader>
             <CardContent>
               <p className="text-gray-600">
-                Upload your raw footage and let our AI handle the editing and optimization.
+                Create content that builds community and keeps members coming back to your gym.
               </p>
             </CardContent>
           </Card>
@@ -100,13 +100,13 @@ const Index = () => {
 
         {!gym && (
           <div className="text-center bg-white rounded-2xl p-12 shadow-sm">
-            <h2 className="text-3xl font-bold mb-4">Ready to Start Creating?</h2>
+            <h2 className="text-3xl font-bold mb-4">Ready to Manage Your Gym Content?</h2>
             <p className="text-gray-600 mb-8 max-w-xl mx-auto">
-              Join thousands of creators who are already using our platform to create amazing content.
+              Join gym owners and fitness professionals who are streamlining their content strategy with our platform.
             </p>
             <Link to="/auth">
               <Button size="lg" className="gap-2">
-                Sign Up Now
+                Get Started Now
                 <ArrowRight className="h-5 w-5" />
               </Button>
             </Link>
