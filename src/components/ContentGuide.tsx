@@ -108,13 +108,13 @@ export function ContentGuide({ open, onClose, contentId, contentData }: ContentG
 
   return (
     <Dialog open={open} onOpenChange={() => onClose()}>
-      <DialogContent className="max-w-6xl max-h-[90vh] overflow-hidden">
-        <DialogHeader>
+      <DialogContent className="max-w-6xl max-h-[90vh] flex flex-col">
+        <DialogHeader className="flex-shrink-0">
           <DialogTitle className="text-2xl">{contentData.title}</DialogTitle>
         </DialogHeader>
         
-        <div className="flex gap-6 h-[70vh]">
-          <div className="flex flex-col">
+        <div className="flex gap-6 flex-1 min-h-0">
+          <div className="flex flex-col flex-shrink-0">
             <FormatSelector 
               selectedFormat={selectedFormat}
               onFormatChange={setSelectedFormat}
@@ -125,19 +125,23 @@ export function ContentGuide({ open, onClose, contentId, contentData }: ContentG
             />
           </div>
 
-          <ContentTabs 
-            selectedFormat={selectedFormat}
-            guideData={guideData}
-          />
+          <div className="flex-1 min-w-0">
+            <ContentTabs 
+              selectedFormat={selectedFormat}
+              guideData={guideData}
+            />
+          </div>
 
-          <UploadRequirements 
-            requirements={requirements}
-            uploadProgress={uploadProgress}
-            onFileUpload={handleFileUpload}
-          />
+          <div className="flex-shrink-0 overflow-y-auto max-h-full">
+            <UploadRequirements 
+              requirements={requirements}
+              uploadProgress={uploadProgress}
+              onFileUpload={handleFileUpload}
+            />
+          </div>
         </div>
 
-        <div className="flex justify-between pt-4 border-t">
+        <div className="flex justify-between pt-4 border-t flex-shrink-0">
           <Button variant="outline" onClick={onClose}>
             Close Guide
           </Button>
