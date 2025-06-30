@@ -9,19 +9,16 @@ export function useUserRole() {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return null;
 
-      // Query user_roles table directly since RLS policies are in place
+      // Use the RPC function we created to get the user role
       const { data, error } = await supabase
-        .from('user_roles')
-        .select('role')
-        .eq('user_id', user.id)
-        .maybeSingle();
+        .rpc('get_user_role', { user_id: user.id });
       
       if (error) {
         console.log('No role found for user, defaulting to user role');
         return 'user';
       }
       
-      return data?.role || 'user';
+      return data || 'user';
     },
     enabled: true,
   });
