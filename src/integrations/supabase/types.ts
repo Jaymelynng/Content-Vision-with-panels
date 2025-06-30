@@ -9,14 +9,73 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      app_settings: {
+        Row: {
+          category: string | null
+          created_at: string | null
+          description: string | null
+          id: number
+          setting_key: string
+          setting_value: Json
+          updated_at: string | null
+        }
+        Insert: {
+          category?: string | null
+          created_at?: string | null
+          description?: string | null
+          id?: number
+          setting_key: string
+          setting_value?: Json
+          updated_at?: string | null
+        }
+        Update: {
+          category?: string | null
+          created_at?: string | null
+          description?: string | null
+          id?: number
+          setting_key?: string
+          setting_value?: Json
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      content_categories: {
+        Row: {
+          active: boolean | null
+          created_at: string | null
+          description: string | null
+          display_order: number | null
+          id: number
+          name: string
+        }
+        Insert: {
+          active?: boolean | null
+          created_at?: string | null
+          description?: string | null
+          display_order?: number | null
+          id?: number
+          name: string
+        }
+        Update: {
+          active?: boolean | null
+          created_at?: string | null
+          description?: string | null
+          display_order?: number | null
+          id?: number
+          name?: string
+        }
+        Relationships: []
+      }
       content_ideas: {
         Row: {
           category: string
+          content_formats: string[] | null
           created_at: string | null
           description: string
           difficulty: string
           engagement: string
           features: string[]
+          file_requirements: Json | null
           formats: string[]
           id: number
           production_tips_photo: string[]
@@ -24,6 +83,7 @@ export type Database = {
           requirements: Json
           setup_planning_photo: string[]
           setup_planning_video: string[]
+          status_options: string[] | null
           target_audience: string[]
           thumbnail: string | null
           title: string
@@ -32,11 +92,13 @@ export type Database = {
         }
         Insert: {
           category: string
+          content_formats?: string[] | null
           created_at?: string | null
           description: string
           difficulty: string
           engagement: string
           features: string[]
+          file_requirements?: Json | null
           formats: string[]
           id?: number
           production_tips_photo: string[]
@@ -44,6 +106,7 @@ export type Database = {
           requirements: Json
           setup_planning_photo: string[]
           setup_planning_video: string[]
+          status_options?: string[] | null
           target_audience: string[]
           thumbnail?: string | null
           title: string
@@ -52,11 +115,13 @@ export type Database = {
         }
         Update: {
           category?: string
+          content_formats?: string[] | null
           created_at?: string | null
           description?: string
           difficulty?: string
           engagement?: string
           features?: string[]
+          file_requirements?: Json | null
           formats?: string[]
           id?: number
           production_tips_photo?: string[]
@@ -64,6 +129,7 @@ export type Database = {
           requirements?: Json
           setup_planning_photo?: string[]
           setup_planning_video?: string[]
+          status_options?: string[] | null
           target_audience?: string[]
           thumbnail?: string | null
           title?: string

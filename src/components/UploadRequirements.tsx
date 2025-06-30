@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Upload, Check, Clock } from "lucide-react";
+import { useAppSettings } from "@/hooks/useAppSettings";
 
 interface Requirement {
   name: string;
@@ -19,6 +20,9 @@ interface UploadRequirementsProps {
 }
 
 export function UploadRequirements({ requirements, uploadProgress, onFileUpload }: UploadRequirementsProps) {
+  const { data: appSettings } = useAppSettings();
+  const fileRequirements = appSettings?.file_requirements || {};
+  
   return (
     <div className="w-80 border-l pl-4 flex flex-col h-full">
       <h3 className="font-semibold mb-4 flex-shrink-0">Upload Requirements</h3>
@@ -60,10 +64,15 @@ export function UploadRequirements({ requirements, uploadProgress, onFileUpload 
       <div className="mt-4 p-3 bg-blue-50 rounded-lg flex-shrink-0">
         <h4 className="font-medium text-sm mb-2">File Requirements</h4>
         <ul className="text-xs space-y-1 text-muted-foreground">
-          <li>• Video: MP4, MOV (max 100MB)</li>
-          <li>• Photo: JPG, PNG (max 10MB)</li>
-          <li>• Landscape orientation preferred</li>
-          <li>• Good lighting essential</li>
+          {fileRequirements.video && (
+            <li>• Video: {fileRequirements.video.formats?.join(', ')} (max {fileRequirements.video.maxSize})</li>
+          )}
+          {fileRequirements.photo && (
+            <li>• Photo: {fileRequirements.photo.formats?.join(', ')} (max {fileRequirements.photo.maxSize})</li>
+          )}
+          {fileRequirements.general?.map((tip: string, index: number) => (
+            <li key={index}>• {tip}</li>
+          ))}
         </ul>
       </div>
     </div>

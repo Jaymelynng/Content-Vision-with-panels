@@ -7,6 +7,7 @@ import { useState } from "react";
 import ContentGrid from "@/components/ContentGrid";
 import { useContentIdeas } from "@/hooks/useContentIdeas";
 import { useUserFavorites, useToggleFavorite } from "@/hooks/useUserFavorites";
+import { useContentCategories } from "@/hooks/useAppSettings";
 import { AuthGuard } from "@/components/AuthGuard";
 import { UserNav } from "@/components/UserNav";
 
@@ -14,6 +15,7 @@ const ContentLibrary = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const { data: ideas = [], isLoading } = useContentIdeas();
   const { data: favorites = [] } = useUserFavorites();
+  const { data: categories = [] } = useContentCategories();
   const toggleFavorite = useToggleFavorite();
   
   const handleToggleFavorite = (id: number) => {
@@ -69,26 +71,21 @@ const ContentLibrary = () => {
 
         <Tabs defaultValue="all" className="w-full">
           <TabsList className="mb-6">
-            <TabsTrigger value="all">All Content</TabsTrigger>
-            <TabsTrigger value="back-to-school">Back-to-School</TabsTrigger>
-            <TabsTrigger value="skill-mastery">Skill Mastery</TabsTrigger>
-            <TabsTrigger value="behind-the-scenes">Behind-the-Scenes</TabsTrigger>
-            <TabsTrigger value="community">Community</TabsTrigger>
-            <TabsTrigger value="gaming">Gaming Challenges</TabsTrigger>
+            {categories.map((category) => (
+              <TabsTrigger key={category.id} value={category.name}>
+                {category.name === 'all' ? 'All Content' : 
+                 category.name.split('-').map(word => 
+                   word.charAt(0).toUpperCase() + word.slice(1)
+                 ).join(' ')}
+              </TabsTrigger>
+            ))}
           </TabsList>
 
-          <TabsContent value="all" className="mt-0">
-            <ContentGrid 
-              ideas={filteredContent} 
-              favorites={favorites} 
-              onToggleFavorite={handleToggleFavorite} 
-            />
-          </TabsContent>
-
-          {["back-to-school", "skill-mastery", "behind-the-scenes", "community", "gaming"].map((category) => (
-            <TabsContent key={category} value={category} className="mt-0">
+          {categories.map((category) => (
+            <TabsContent key={category.id} value={category.name} className="mt-0">
               <ContentGrid 
-                ideas={filteredContent.filter((idea) => idea.category === category)} 
+                ideas={category.name === 'all' ? filteredContent : 
+                       filteredContent.filter((idea) => idea.category === category.name)} 
                 favorites={favorites} 
                 onToggleFavorite={handleToggleFavorite} 
               />
