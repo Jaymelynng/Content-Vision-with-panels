@@ -1,7 +1,8 @@
 
 import { Link, useLocation } from "react-router-dom";
-import { Calendar, LayoutDashboard, Upload, Settings, BookOpen, FileText } from "lucide-react";
+import { Calendar, LayoutDashboard, Upload, Settings, BookOpen, FileText, Shield } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useIsAdmin } from "@/hooks/useUserRole";
 import {
   SidebarGroup,
   SidebarGroupContent,
@@ -32,12 +33,6 @@ const navItems = [
     href: "/documents",
     icon: FileText,
   },
-  // Video Editor temporarily removed - see FUTURE_FEATURES.md
-  // {
-  //   title: "Video Editor",
-  //   href: "/editor",
-  //   icon: PlaySquare,
-  // },
   {
     title: "Calendar",
     href: "/calendar",
@@ -52,6 +47,7 @@ const navItems = [
 
 export function SidebarNav() {
   const location = useLocation();
+  const isAdmin = useIsAdmin();
   
   return (
     <SidebarGroup>
@@ -74,6 +70,19 @@ export function SidebarNav() {
               </SidebarMenuItem>
             );
           })}
+          {isAdmin && (
+            <SidebarMenuItem>
+              <SidebarMenuButton asChild>
+                <Link 
+                  to="/admin" 
+                  className={cn("flex items-center gap-3 px-3 py-2 rounded-md", location.pathname === "/admin" ? "bg-sidebar-accent text-sidebar-accent-foreground" : "hover:bg-sidebar-accent/50")}
+                >
+                  <Shield className="h-5 w-5" />
+                  <span>Admin Panel</span>
+                </Link>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+          )}
         </SidebarMenu>
       </SidebarGroupContent>
     </SidebarGroup>
