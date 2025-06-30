@@ -62,13 +62,14 @@ export function ContentIdeaEditor({ contentIdea, onClose }: ContentIdeaEditorPro
 
   const handleSave = async () => {
     try {
-      const requirementsData = {
+      // Convert requirements to JSON-compatible format
+      const requirementsJson = JSON.stringify({
         upload_requirements: uploadRequirements,
-      };
+      });
 
       const dataToSave = {
         ...formData,
-        requirements: requirementsData,
+        requirements: requirementsJson as any, // Cast to satisfy JSON type
         setup_planning_photo: contentIdea?.setup_planning_photo || [],
         setup_planning_video: contentIdea?.setup_planning_video || [],
         production_tips_photo: contentIdea?.production_tips_photo || [],
