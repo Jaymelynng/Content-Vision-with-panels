@@ -2,21 +2,25 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Search, Filter } from "lucide-react";
+import { Search, Filter, Shield } from "lucide-react";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import ContentGrid from "@/components/ContentGrid";
 import { useContentIdeas } from "@/hooks/useContentIdeas";
 import { useUserFavorites, useToggleFavorite } from "@/hooks/useUserFavorites";
 import { useContentCategories } from "@/hooks/useAppSettings";
 import { AuthGuard } from "@/components/AuthGuard";
 import { UserNav } from "@/components/UserNav";
+import { useIsAdmin } from "@/hooks/useUserRole";
 
 const ContentLibrary = () => {
   const [searchTerm, setSearchTerm] = useState("");
+  const navigate = useNavigate();
   const { data: ideas = [], isLoading } = useContentIdeas();
   const { data: favorites = [] } = useUserFavorites();
   const { data: categories = [] } = useContentCategories();
   const toggleFavorite = useToggleFavorite();
+  const isAdmin = useIsAdmin();
   
   const handleToggleFavorite = (id: number) => {
     const isFavorite = favorites.includes(id);
@@ -51,6 +55,17 @@ const ContentLibrary = () => {
           </div>
           <div className="flex items-center gap-2">
             <UserNav />
+            {isAdmin && (
+              <Button 
+                variant="outline" 
+                size="sm"
+                onClick={() => navigate('/admin')}
+                className="flex items-center gap-2"
+              >
+                <Shield className="h-4 w-4" />
+                ADMIN PANEL
+              </Button>
+            )}
             <Button variant="outline" size="sm">
               <Filter className="h-4 w-4 mr-2" />
               Filter
