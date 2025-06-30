@@ -1,24 +1,20 @@
 
 import { useQuery } from '@tanstack/react-query';
-import { supabase } from '@/integrations/supabase/client';
+import { useAuth } from '@/hooks/useAuth';
+
+// List of admin gym PINs - add more as needed
+const ADMIN_GYMS = ['1426', '2222'];
 
 export function useUserRole() {
+  const { gym } = useAuth();
+  
   return useQuery({
-    queryKey: ['user-role'],
+    queryKey: ['user-role', gym?.pin_code],
     queryFn: async () => {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) return null;
-
-      // Use the RPC function we created to get the user role
-      const { data, error } = await supabase
-        .rpc('get_user_role', { user_id: user.id });
+      if (!gym) return 'user';
       
-      if (error) {
-        console.log('No role found for user, defaulting to user role');
-        return 'user';
-      }
-      
-      return data || 'user';
+      // Check if current gym is an admin gym
+      return ADMIN_GYMS.includes(gym.pin_code) ? 'admin' : 'user';
     },
     enabled: true,
   });
