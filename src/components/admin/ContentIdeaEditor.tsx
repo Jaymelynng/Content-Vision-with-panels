@@ -42,17 +42,33 @@ export function ContentIdeaEditor({ contentIdea, onClose }: ContentIdeaEditorPro
     features: contentIdea?.features || [],
   });
 
+  // Safely extract upload requirements from the requirements JSON
+  const getUploadRequirements = (requirements: any): UploadRequirement[] => {
+    if (!requirements) return [];
+    if (typeof requirements === 'string') {
+      try {
+        const parsed = JSON.parse(requirements);
+        return parsed.upload_requirements || [];
+      } catch {
+        return [];
+      }
+    }
+    return requirements.upload_requirements || [];
+  };
+
   const [uploadRequirements, setUploadRequirements] = useState<UploadRequirement[]>(
-    contentIdea?.requirements?.upload_requirements || []
+    getUploadRequirements(contentIdea?.requirements)
   );
 
   const handleSave = async () => {
     try {
+      const requirementsData = {
+        upload_requirements: uploadRequirements,
+      };
+
       const dataToSave = {
         ...formData,
-        requirements: {
-          upload_requirements: uploadRequirements,
-        },
+        requirements: requirementsData,
         setup_planning_photo: contentIdea?.setup_planning_photo || [],
         setup_planning_video: contentIdea?.setup_planning_video || [],
         production_tips_photo: contentIdea?.production_tips_photo || [],

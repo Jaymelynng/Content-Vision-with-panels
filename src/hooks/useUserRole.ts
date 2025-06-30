@@ -9,10 +9,9 @@ export function useUserRole() {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return null;
 
+      // Use raw SQL query since user_roles table might not be in types yet
       const { data, error } = await supabase
-        .from('user_roles')
-        .select('role')
-        .eq('user_id', user.id)
+        .rpc('get_user_role', { user_id: user.id })
         .single();
       
       if (error) {
@@ -20,7 +19,7 @@ export function useUserRole() {
         return 'user';
       }
       
-      return data.role;
+      return data || 'user';
     },
     enabled: true,
   });
