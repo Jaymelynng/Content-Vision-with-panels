@@ -1,6 +1,5 @@
-
 import { Link, useLocation } from "react-router-dom";
-import { Calendar, LayoutDashboard, Upload, Settings, BookOpen, FileText, Shield } from "lucide-react";
+import { Calendar, LayoutDashboard, Upload, Settings, BookOpen, Shield } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useIsAdmin } from "@/hooks/useUserRole";
 import {
@@ -27,11 +26,6 @@ const navItems = [
     title: "Upload Content",
     href: "/upload",
     icon: Upload,
-  },
-  {
-    title: "Document Processing",
-    href: "/documents",
-    icon: FileText,
   },
   {
     title: "Calendar",

@@ -14,7 +14,6 @@ import Editor from "./pages/Editor";
 import Preview from "./pages/Preview";
 import Settings from "./pages/Settings";
 import Auth from "./pages/Auth";
-import DocumentProcessing from "./pages/DocumentProcessing";
 import Admin from "./pages/Admin";
 
 const queryClient = new QueryClient();
@@ -34,7 +33,6 @@ function App() {
                 <Route path="content-library" element={<ContentLibrary />} />
                 <Route path="templates" element={<Templates />} />
                 <Route path="upload" element={<ContentUpload />} />
-                <Route path="documents" element={<DocumentProcessing />} />
                 <Route path="admin" element={<Admin />} />
                 <Route path="editor" element={<Editor />} />
                 <Route path="preview" element={<Preview />} />
