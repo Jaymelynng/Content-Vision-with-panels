@@ -1,13 +1,15 @@
 
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { FormatSelector } from "./FormatSelector";
 import { ContentStats } from "./ContentStats";
 import { ContentTabs } from "./ContentTabs";
 import { UploadRequirements } from "./UploadRequirements";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/hooks/useAuth";
 import type { ContentIdea } from "@/hooks/useContentIdeas";
 
 interface ContentGuideProps {
@@ -22,6 +24,57 @@ export function ContentGuide({ open, onClose, contentId, contentData }: ContentG
   const [uploadProgress, setUploadProgress] = useState<{ [key: string]: number }>({});
   const [uploadedFiles, setUploadedFiles] = useState<{ [key: string]: File }>({});
   const navigate = useNavigate();
+  const { gym } = useAuth();
+
+  // Load existing progress from database
+  useEffect(() => {
+    const loadProgress = async () => {
+      if (!gym?.id) return;
+      
+      const { data, error } = await supabase
+        .from('user_content_progress')
+        .select('*')
+        .eq('content_id', contentId)
+        .eq('gym_id', gym.id)
+        .eq('selected_format', selectedFormat)
+        .single();
+
+      if (data && !error) {
+        setUploadProgress(data.upload_progress as { [key: string]: number } || {});
+      }
+    };
+
+    if (open) {
+      loadProgress();
+    }
+  }, [open, contentId, gym?.id, selectedFormat]);
+
+  // Save progress to database
+  const saveProgressToDatabase = async (progressUpdate: { [key: string]: number }, filesUpdate: { [key: string]: File }) => {
+    if (!gym?.id) return;
+
+    const uploadedFileData = Object.entries(filesUpdate).map(([name, file]) => ({
+      name: file.name,
+      size: file.size,
+      type: file.type,
+      requirement: name
+    }));
+
+    const { error } = await supabase
+      .from('user_content_progress')
+      .upsert({
+        content_id: contentId,
+        gym_id: gym.id,
+        selected_format: selectedFormat,
+        upload_progress: progressUpdate,
+        uploaded_files: uploadedFileData,
+        status: Object.values(progressUpdate).every(p => p === 100) ? 'completed' : 'in-progress'
+      });
+
+    if (error) {
+      console.error('Error saving progress:', error);
+    }
+  };
   
   // Parse requirements from the database
   const requirements = typeof contentData.requirements === 'string' 
@@ -36,15 +89,20 @@ export function ContentGuide({ open, onClose, contentId, contentData }: ContentG
     input.onchange = (e) => {
       const file = (e.target as HTMLInputElement).files?.[0];
       if (file) {
-        setUploadedFiles(prev => ({ ...prev, [requirementName]: file }));
+        const updatedFiles = { ...uploadedFiles, [requirementName]: file };
+        setUploadedFiles(updatedFiles);
         
         let progress = 0;
-        const interval = setInterval(() => {
+        const interval = setInterval(async () => {
           progress += 10;
-          setUploadProgress(prev => ({ ...prev, [requirementName]: progress }));
+          const updatedProgress = { ...uploadProgress, [requirementName]: progress };
+          setUploadProgress(updatedProgress);
+          
           if (progress >= 100) {
             clearInterval(interval);
             toast.success(`${requirementName} uploaded successfully!`);
+            // Save progress to database when upload completes
+            await saveProgressToDatabase(updatedProgress, updatedFiles);
           }
         }, 200);
       }

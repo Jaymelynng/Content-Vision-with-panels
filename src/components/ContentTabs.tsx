@@ -30,7 +30,17 @@ export function ContentTabs({ selectedFormat, guideData }: ContentTabsProps) {
           <div className="w-6 h-6 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center text-sm font-medium flex-shrink-0">
             {index + 1}
           </div>
-          <span>{item}</span>
+          <span className="text-sm">{item}</span>
+        </li>
+      ))}
+    </ul>
+  );
+
+  const renderClipItems = (items: string[]) => (
+    <ul className="space-y-4">
+      {items.map((item, index) => (
+        <li key={index} className="border-l-4 border-blue-500 pl-4 bg-slate-50 p-3 rounded-r-lg">
+          <span className="text-sm leading-relaxed">{item}</span>
         </li>
       ))}
     </ul>
@@ -42,7 +52,7 @@ export function ContentTabs({ selectedFormat, guideData }: ContentTabsProps) {
         <TabsList className="grid w-full grid-cols-3">
           <TabsTrigger value="setup">Setup & Planning</TabsTrigger>
           <TabsTrigger value="production">Production Tips</TabsTrigger>
-          <TabsTrigger value="upload">Upload & Track</TabsTrigger>
+          <TabsTrigger value="examples">Content Examples</TabsTrigger>
         </TabsList>
 
         <TabsContent value="setup" className="mt-4">
@@ -79,19 +89,19 @@ export function ContentTabs({ selectedFormat, guideData }: ContentTabsProps) {
           </Card>
         </TabsContent>
 
-        <TabsContent value="upload" className="mt-4">
+        <TabsContent value="examples" className="mt-4">
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Image className="w-5 h-5" />
-                Upload & Tracking
+                Content Examples & Shot List
                 <Badge variant={selectedFormat === 'photo' ? 'default' : 'secondary'}>
                   {selectedFormat === 'photo' ? 'Photo' : 'Video'}
                 </Badge>
               </CardTitle>
             </CardHeader>
             <CardContent>
-              {renderListItems(guideData.uploadTrack[selectedFormat])}
+              {renderClipItems(guideData.uploadTrack[selectedFormat])}
             </CardContent>
           </Card>
         </TabsContent>

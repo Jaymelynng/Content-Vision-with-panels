@@ -156,7 +156,7 @@ You are an expert content strategist for gymnastics gyms. Analyze the following 
 For each content idea you identify, provide a JSON object with these exact fields:
 - title: Clear, engaging title
 - description: Detailed description of the content idea
-- category: One of: "skill-mastery", "back-to-school", "team-building", "competition-prep", "fun-challenges", "parent-engagement", "seasonal", "educational"
+- category: One of: "skill-development", "seasonal-events", "event-promotion", "community-engagement", "educational-coaching", "behind-the-scenes"
 - difficulty: "easy", "medium", or "hard"
 - engagement: "low", "medium", or "high"
 - target_audience: Array of strings like ["growth", "premium", "competitive", "recreational"]
