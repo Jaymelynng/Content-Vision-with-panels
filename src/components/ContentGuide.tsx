@@ -169,6 +169,11 @@ export function ContentGuide({ open, onClose, contentId, contentData }: ContentG
       <DialogContent className="max-w-6xl max-h-[90vh] flex flex-col">
         <DialogHeader className="flex-shrink-0">
           <DialogTitle className="text-2xl">{contentData.title}</DialogTitle>
+          {contentData.due_date && (
+            <p className="text-sm text-muted-foreground mt-1">
+              Due: {new Date(contentData.due_date).toLocaleDateString()}
+            </p>
+          )}
         </DialogHeader>
         
         <div className="flex gap-6 flex-1 min-h-0">

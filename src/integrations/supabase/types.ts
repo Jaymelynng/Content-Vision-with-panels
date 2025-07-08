@@ -78,6 +78,7 @@ export type Database = {
           created_at: string | null
           description: string
           difficulty: string
+          due_date: string | null
           engagement: string
           features: string[]
           file_requirements: Json | null
@@ -101,6 +102,7 @@ export type Database = {
           created_at?: string | null
           description: string
           difficulty: string
+          due_date?: string | null
           engagement: string
           features: string[]
           file_requirements?: Json | null
@@ -124,6 +126,7 @@ export type Database = {
           created_at?: string | null
           description?: string
           difficulty?: string
+          due_date?: string | null
           engagement?: string
           features?: string[]
           file_requirements?: Json | null

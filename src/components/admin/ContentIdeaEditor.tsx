@@ -40,6 +40,7 @@ export function ContentIdeaEditor({ contentIdea, onClose }: ContentIdeaEditorPro
     formats: contentIdea?.formats || ['photo', 'video'],
     target_audience: contentIdea?.target_audience || ['growth'],
     features: contentIdea?.features || [],
+    due_date: contentIdea?.due_date ? new Date(contentIdea.due_date).toISOString().split('T')[0] : '',
   });
 
   // Safely extract upload requirements from the requirements JSON
@@ -146,6 +147,16 @@ export function ContentIdeaEditor({ contentIdea, onClose }: ContentIdeaEditorPro
                 onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                 placeholder="Enter content idea description"
                 rows={3}
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="due_date">Due Date</Label>
+              <Input
+                id="due_date"
+                type="date"
+                value={formData.due_date}
+                onChange={(e) => setFormData({ ...formData, due_date: e.target.value })}
               />
             </div>
 
