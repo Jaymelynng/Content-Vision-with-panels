@@ -20,7 +20,7 @@ interface ContentGuideProps {
 }
 
 export function ContentGuide({ open, onClose, contentId, contentData }: ContentGuideProps) {
-  const [selectedFormat, setSelectedFormat] = useState<'photo' | 'video'>('photo');
+  const [selectedFormats, setSelectedFormats] = useState<string[]>(['static-photo']);
   const [uploadProgress, setUploadProgress] = useState<{ [key: string]: number }>({});
   const [uploadedFiles, setUploadedFiles] = useState<{ [key: string]: File }>({});
   const navigate = useNavigate();
@@ -36,7 +36,7 @@ export function ContentGuide({ open, onClose, contentId, contentData }: ContentG
         .select('*')
         .eq('content_id', contentId)
         .eq('gym_id', gym.id)
-        .eq('selected_format', selectedFormat)
+        .eq('selected_format', selectedFormats[0] || 'static-photo')
         .single();
 
       if (data && !error) {
@@ -47,7 +47,7 @@ export function ContentGuide({ open, onClose, contentId, contentData }: ContentG
     if (open) {
       loadProgress();
     }
-  }, [open, contentId, gym?.id, selectedFormat]);
+  }, [open, contentId, gym?.id, selectedFormats]);
 
   // Save progress to database
   const saveProgressToDatabase = async (progressUpdate: { [key: string]: number }, filesUpdate: { [key: string]: File }) => {
@@ -65,7 +65,7 @@ export function ContentGuide({ open, onClose, contentId, contentData }: ContentG
       .upsert({
         content_id: contentId,
         gym_id: gym.id,
-        selected_format: selectedFormat,
+        selected_format: selectedFormats[0] || 'static-photo',
         upload_progress: progressUpdate,
         uploaded_files: uploadedFileData,
         status: Object.values(progressUpdate).every(p => p === 100) ? 'completed' : 'in-progress'
@@ -84,7 +84,7 @@ export function ContentGuide({ open, onClose, contentId, contentData }: ContentG
   const handleFileUpload = (requirementName: string) => {
     const input = document.createElement('input');
     input.type = 'file';
-    input.accept = selectedFormat === 'photo' ? 'image/*' : 'video/*';
+    input.accept = selectedFormats.includes('video-reel') ? 'video/*' : 'image/*';
     
     input.onchange = (e) => {
       const file = (e.target as HTMLInputElement).files?.[0];
@@ -123,7 +123,7 @@ export function ContentGuide({ open, onClose, contentId, contentData }: ContentG
     if (uploadedFilesList.length > 0) {
       sessionStorage.setItem('uploadedFiles', JSON.stringify(uploadedFilesList));
       sessionStorage.setItem('selectedTemplate', contentId.toString());
-      sessionStorage.setItem('contentFormat', selectedFormat);
+      sessionStorage.setItem('contentFormat', selectedFormats.join(','));
       
       navigate('/editor');
       onClose();
@@ -135,7 +135,7 @@ export function ContentGuide({ open, onClose, contentId, contentData }: ContentG
   const handleSaveDraft = () => {
     const draftData = {
       contentId,
-      selectedFormat,
+      selectedFormats,
       uploadedFiles: Object.keys(uploadedFiles),
       progress: uploadProgress,
       timestamp: new Date().toISOString()
@@ -179,8 +179,8 @@ export function ContentGuide({ open, onClose, contentId, contentData }: ContentG
         <div className="flex gap-6 flex-1 min-h-0">
           <div className="flex flex-col flex-shrink-0">
             <FormatSelector 
-              selectedFormat={selectedFormat}
-              onFormatChange={setSelectedFormat}
+              selectedFormats={selectedFormats}
+              onFormatChange={setSelectedFormats}
             />
             <ContentStats 
               uploadProgress={uploadProgress}
@@ -190,7 +190,7 @@ export function ContentGuide({ open, onClose, contentId, contentData }: ContentG
 
           <div className="flex-1 min-w-0">
             <ContentTabs 
-              selectedFormat={selectedFormat}
+              selectedFormat={selectedFormats.includes('video-reel') ? 'video' : 'photo'}
               guideData={guideData}
             />
           </div>
