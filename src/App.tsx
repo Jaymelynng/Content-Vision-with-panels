@@ -6,7 +6,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "@/hooks/useAuth";
 import AppLayout from "./layouts/AppLayout";
 import Index from "./pages/Index";
-import Dashboard from "./pages/Dashboard";
+
 import ContentLibrary from "./pages/ContentLibrary";
 import Templates from "./pages/Templates";
 import ContentUpload from "./pages/ContentUpload";
@@ -29,7 +29,6 @@ function App() {
               <Route path="/" element={<Index />} />
               <Route path="/auth" element={<Auth />} />
               <Route path="/" element={<AppLayout />}>
-                <Route path="dashboard" element={<Dashboard />} />
                 <Route path="content-library" element={<ContentLibrary />} />
                 <Route path="templates" element={<Templates />} />
                 <Route path="upload" element={<ContentUpload />} />
