@@ -21,9 +21,9 @@ const Index = () => {
           </p>
           <div className="flex gap-4 justify-center">
             {gym ? (
-              <Link to="/content-library">
+              <Link to="/dashboard">
                 <Button size="lg" className="gap-2">
-                  Go to Content Library
+                  Go to My Assignments
                   <ArrowRight className="h-5 w-5" />
                 </Button>
               </Link>

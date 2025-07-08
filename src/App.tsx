@@ -29,6 +29,7 @@ function App() {
               <Route path="/" element={<Index />} />
               <Route path="/auth" element={<Auth />} />
               <Route path="/" element={<AppLayout />}>
+                <Route path="dashboard" element={<ContentLibrary />} />
                 <Route path="content-library" element={<ContentLibrary />} />
                 <Route path="templates" element={<Templates />} />
                 <Route path="upload" element={<ContentUpload />} />

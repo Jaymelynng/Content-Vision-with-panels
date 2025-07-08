@@ -48,9 +48,9 @@ const ContentLibrary = () => {
       <div className="space-y-6">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold tracking-tight">Content Library</h1>
+            <h1 className="text-3xl font-bold tracking-tight">My Assignments</h1>
             <p className="text-muted-foreground">
-              Your luxury catalog of high-performing content strategies at your fingertips.
+              Track and complete your content assignments
             </p>
           </div>
           <div className="flex items-center gap-2">
@@ -77,7 +77,7 @@ const ContentLibrary = () => {
         <div className="relative max-w-md">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <Input 
-            placeholder="Search content ideas..." 
+            placeholder="Search assignments..." 
             value={searchTerm} 
             onChange={(e) => setSearchTerm(e.target.value)} 
             className="pl-10" 

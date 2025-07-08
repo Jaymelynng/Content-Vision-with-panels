@@ -13,12 +13,17 @@ import {
 
 const navItems = [
   {
-    title: "Content Library",
+    title: "Dashboard",
+    href: "/dashboard",
+    icon: LayoutDashboard,
+  },
+  {
+    title: "My Assignments",
     href: "/content-library",
     icon: BookOpen,
   },
   {
-    title: "Upload Content",
+    title: "Submit Work",
     href: "/upload",
     icon: Upload,
   },
