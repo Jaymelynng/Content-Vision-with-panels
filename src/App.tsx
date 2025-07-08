@@ -5,7 +5,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "@/hooks/useAuth";
 import AppLayout from "./layouts/AppLayout";
-import Index from "./pages/Index";
+
 
 import ContentLibrary from "./pages/ContentLibrary";
 import Templates from "./pages/Templates";
@@ -26,7 +26,7 @@ function App() {
           <Toaster />
           <BrowserRouter>
             <Routes>
-              <Route path="/" element={<Index />} />
+              <Route path="/" element={<Auth />} />
               <Route path="/auth" element={<Auth />} />
               <Route path="/" element={<AppLayout />}>
                 <Route path="dashboard" element={<ContentLibrary />} />
