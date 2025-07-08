@@ -2,8 +2,10 @@
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Upload, Check, Clock } from "lucide-react";
+import { Upload, Check, Clock, Maximize, Play } from "lucide-react";
 import { useAppSettings } from "@/hooks/useAppSettings";
+import { MediaViewer } from "./MediaViewer";
+import { useState } from "react";
 
 interface Requirement {
   name: string;
@@ -23,6 +25,7 @@ interface UploadRequirementsProps {
 export function UploadRequirements({ requirements, uploadProgress, uploadedFiles, onFileUpload }: UploadRequirementsProps) {
   const { data: appSettings } = useAppSettings();
   const fileRequirements = appSettings?.file_requirements || {};
+  const [selectedFile, setSelectedFile] = useState<{ file: File; name: string } | null>(null);
   
   return (
     <div className="w-80 flex flex-col h-full">
@@ -73,26 +76,52 @@ export function UploadRequirements({ requirements, uploadProgress, uploadedFiles
                 {/* Thumbnail Preview */}
                 {uploadedFile && uploadProgress[req.name] === 100 && (
                   <div className="mb-3 p-2 bg-gray-50 rounded border">
-                    <div className="aspect-video bg-gray-200 rounded overflow-hidden">
+                    <div 
+                      className="aspect-video bg-gray-200 rounded overflow-hidden relative group cursor-pointer"
+                      onClick={() => setSelectedFile({ file: uploadedFile, name: req.name })}
+                    >
                       {uploadedFile.type.startsWith('video/') ? (
-                        <video 
-                          src={URL.createObjectURL(uploadedFile)} 
-                          className="w-full h-full object-cover"
-                          autoPlay
-                          muted
-                          loop
-                          controls={false}
-                        />
+                        <>
+                          <video 
+                            src={URL.createObjectURL(uploadedFile)} 
+                            className="w-full h-full object-cover"
+                            muted
+                            loop
+                            autoPlay
+                          />
+                          <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-30 transition-all duration-200 flex items-center justify-center">
+                            <div className="opacity-0 group-hover:opacity-100 bg-white bg-opacity-20 rounded-full p-2 backdrop-blur-sm">
+                              <Play className="w-6 h-6 text-white" />
+                            </div>
+                          </div>
+                        </>
                       ) : (
-                        <img 
-                          src={URL.createObjectURL(uploadedFile)} 
-                          alt={req.name}
-                          className="w-full h-full object-cover"
-                        />
+                        <>
+                          <img 
+                            src={URL.createObjectURL(uploadedFile)} 
+                            alt={req.name}
+                            className="w-full h-full object-cover"
+                          />
+                          <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-30 transition-all duration-200 flex items-center justify-center">
+                            <div className="opacity-0 group-hover:opacity-100 bg-white bg-opacity-20 rounded-full p-2 backdrop-blur-sm">
+                              <Maximize className="w-6 h-6 text-white" />
+                            </div>
+                          </div>
+                        </>
                       )}
+                      
+                      {/* Enhancement Badge */}
+                      <div className="absolute top-2 right-2 bg-purple-500 text-white text-xs px-2 py-1 rounded-full flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <span>✨ Enhance</span>
+                      </div>
                     </div>
-                    <div className="mt-1 text-xs text-gray-600 text-center">
-                      {uploadedFile.name}
+                    <div className="mt-2 flex items-center justify-between">
+                      <div className="text-xs text-gray-600 truncate">
+                        {uploadedFile.name}
+                      </div>
+                      <div className="text-xs text-gray-500">
+                        Click to enhance
+                      </div>
                     </div>
                   </div>
                 )}
@@ -160,6 +189,14 @@ export function UploadRequirements({ requirements, uploadProgress, uploadedFiles
           ))}
         </ul>
       </div>
+
+      {/* Media Viewer Modal */}
+      <MediaViewer
+        open={!!selectedFile}
+        onClose={() => setSelectedFile(null)}
+        file={selectedFile?.file!}
+        fileName={selectedFile?.name || ''}
+      />
     </div>
   );
 }
