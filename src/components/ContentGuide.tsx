@@ -1,6 +1,7 @@
 
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
+import { Progress } from "@/components/ui/progress";
 import { useState, useEffect } from "react";
 import { FormatSelector } from "./FormatSelector";
 import { ContentStats } from "./ContentStats";
@@ -226,6 +227,15 @@ export function ContentGuide({ open, onClose, contentId, contentData }: ContentG
           </div>
 
           <div className="flex-shrink-0 overflow-y-auto max-h-full">
+            <div className="w-80 border-l pl-4 mb-4">
+              <div className="pt-2 border-t">
+                <div className="flex justify-between text-sm font-medium mb-2">
+                  <span>Overall:</span>
+                  <span>{Math.round(overallProgress)}% complete</span>
+                </div>
+                <Progress value={overallProgress} className="h-2" />
+              </div>
+            </div>
             <UploadRequirements 
               requirements={requirements}
               uploadProgress={uploadProgress}
