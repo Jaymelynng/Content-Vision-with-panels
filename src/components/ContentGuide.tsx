@@ -317,6 +317,7 @@ export function ContentGuide({ open, onClose, contentId, contentData }: ContentG
             <UploadRequirements 
               requirements={requirements}
               uploadProgress={uploadProgress}
+              uploadedFiles={uploadedFiles}
               onFileUpload={handleFileUpload}
             />
           </div>
