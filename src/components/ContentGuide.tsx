@@ -261,12 +261,91 @@ export function ContentGuide({ open, onClose, contentId, contentData }: ContentG
 
           {/* Upload Section */}
           <div className="flex-shrink-0 w-80">
-            <div className="mb-4">
-              <div className="flex justify-between text-sm font-medium mb-2">
-                <span>Progress:</span>
-                <span>{completedCount}/{requirements.length} complete</span>
+            {/* Visual Progress Section */}
+            <div className="mb-6 p-4 bg-gradient-to-r from-blue-50 to-purple-50 rounded-lg border">
+              <div className="flex items-center justify-between mb-3">
+                <h3 className="font-semibold text-gray-800">Assignment Progress</h3>
+                <div className="flex items-center gap-2">
+                  <div className="relative w-12 h-12">
+                    <svg className="w-12 h-12 transform -rotate-90" viewBox="0 0 36 36">
+                      <path
+                        d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                        fill="none"
+                        stroke="#e5e7eb"
+                        strokeWidth="2"
+                      />
+                      <path
+                        d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                        fill="none"
+                        stroke={overallProgress === 100 ? "#10b981" : "#3b82f6"}
+                        strokeWidth="2"
+                        strokeDasharray={`${overallProgress}, 100`}
+                        className="transition-all duration-500 ease-out"
+                      />
+                    </svg>
+                    <div className="absolute inset-0 flex items-center justify-center">
+                      <span className="text-xs font-bold text-gray-700">
+                        {Math.round(overallProgress)}%
+                      </span>
+                    </div>
+                  </div>
+                  {overallProgress === 100 && (
+                    <div className="animate-scale-in text-green-500">
+                      🎉
+                    </div>
+                  )}
+                </div>
               </div>
-              <Progress value={overallProgress} className="h-2" />
+              
+              {/* Individual Requirements Progress */}
+              <div className="space-y-2">
+                {requirements.map((req: any, index: number) => (
+                  <div 
+                    key={index} 
+                    className={`flex items-center gap-3 p-2 rounded transition-all duration-300 ${
+                      uploadProgress[req.name] === 100 
+                        ? 'bg-green-50 border border-green-200' 
+                        : 'bg-white border border-gray-200'
+                    }`}
+                  >
+                    <div className="relative">
+                      <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all duration-300 ${
+                        uploadProgress[req.name] === 100
+                          ? 'bg-green-500 border-green-500 scale-110'
+                          : uploadProgress[req.name] > 0
+                          ? 'bg-blue-500 border-blue-500'
+                          : 'bg-gray-100 border-gray-300'
+                      }`}>
+                        {uploadProgress[req.name] === 100 ? (
+                          <svg className="w-3 h-3 text-white animate-scale-in" fill="currentColor" viewBox="0 0 20 20">
+                            <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                          </svg>
+                        ) : uploadProgress[req.name] > 0 ? (
+                          <div className="w-1.5 h-1.5 bg-white rounded-full animate-pulse" />
+                        ) : (
+                          <div className="w-1.5 h-1.5 bg-gray-400 rounded-full" />
+                        )}
+                      </div>
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="text-sm font-medium text-gray-800 truncate">
+                        {req.name}
+                      </div>
+                      {uploadProgress[req.name] > 0 && uploadProgress[req.name] < 100 && (
+                        <div className="w-full bg-gray-200 rounded-full h-1 mt-1">
+                          <div 
+                            className="bg-blue-500 h-1 rounded-full transition-all duration-300"
+                            style={{ width: `${uploadProgress[req.name]}%` }}
+                          />
+                        </div>
+                      )}
+                    </div>
+                    <div className="text-xs text-gray-500">
+                      {uploadProgress[req.name] === 100 ? '✓' : uploadProgress[req.name] > 0 ? `${uploadProgress[req.name]}%` : ''}
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
             
             <UploadRequirements 
