@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Settings, ClipboardList, Users, Plus } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
-import { AssignmentManager } from './admin/AssignmentManager';
+import { ContentLibraryManager } from './admin/ContentLibraryManager';
 import { AppSettingsManager } from './admin/AppSettingsManager';
 import { ContentCategoriesManager } from './admin/ContentCategoriesManager';
 
@@ -39,18 +39,18 @@ export function AdminPanel() {
       <div>
         <h1 className="text-3xl font-bold tracking-tight">Admin Panel</h1>
         <p className="text-muted-foreground">
-          Manage assignments, track progress, and review submissions.
+          Manage content library, track submissions, and review ambassador progress.
         </p>
         <p className="text-sm text-green-600 mt-1">
           Logged in as: {gym.gym_name} (Admin)
         </p>
       </div>
 
-      <Tabs defaultValue="assignments" className="w-full">
+      <Tabs defaultValue="content" className="w-full">
         <TabsList className="grid w-full grid-cols-3">
-          <TabsTrigger value="assignments" className="flex items-center gap-2">
+          <TabsTrigger value="content" className="flex items-center gap-2">
             <ClipboardList className="h-4 w-4" />
-            Assignments
+            Content Library
           </TabsTrigger>
           <TabsTrigger value="categories" className="flex items-center gap-2">
             <Users className="h-4 w-4" />
@@ -62,8 +62,8 @@ export function AdminPanel() {
           </TabsTrigger>
         </TabsList>
 
-        <TabsContent value="assignments" className="space-y-4">
-          <AssignmentManager />
+        <TabsContent value="content" className="space-y-4">
+          <ContentLibraryManager />
         </TabsContent>
 
         <TabsContent value="categories" className="space-y-4">
