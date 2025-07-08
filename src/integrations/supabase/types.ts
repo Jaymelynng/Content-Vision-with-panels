@@ -279,6 +279,53 @@ export type Database = {
         }
         Relationships: []
       }
+      media_enhancements: {
+        Row: {
+          created_at: string | null
+          enhanced_file_url: string | null
+          enhancement_quality: string
+          gym_id: string | null
+          id: string
+          original_file_name: string
+          original_file_size: number
+          processing_status: string | null
+          updated_at: string | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          enhanced_file_url?: string | null
+          enhancement_quality: string
+          gym_id?: string | null
+          id?: string
+          original_file_name: string
+          original_file_size: number
+          processing_status?: string | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          enhanced_file_url?: string | null
+          enhancement_quality?: string
+          gym_id?: string | null
+          id?: string
+          original_file_name?: string
+          original_file_size?: number
+          processing_status?: string | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "media_enhancements_gym_id_fkey"
+            columns: ["gym_id"]
+            isOneToOne: false
+            referencedRelation: "gym_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       uploaded_documents: {
         Row: {
           created_at: string
