@@ -1,17 +1,15 @@
-
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
+import { Badge } from "@/components/ui/badge";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useState, useEffect } from "react";
-import { FormatSelector } from "./FormatSelector";
-import { ContentStats } from "./ContentStats";
-import { ContentTabs } from "./ContentTabs";
 import { UploadRequirements } from "./UploadRequirements";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
-import { Camera, Video, MessageCircle } from "lucide-react";
+import { Camera, Video, Image, Settings } from "lucide-react";
 import type { ContentIdea } from "@/hooks/useContentIdeas";
 
 interface ContentGuideProps {
@@ -22,11 +20,30 @@ interface ContentGuideProps {
 }
 
 export function ContentGuide({ open, onClose, contentId, contentData }: ContentGuideProps) {
-  const [selectedFormat, setSelectedFormat] = useState<string>('photo-version');
   const [uploadProgress, setUploadProgress] = useState<{ [key: string]: number }>({});
   const [uploadedFiles, setUploadedFiles] = useState<{ [key: string]: File }>({});
   const navigate = useNavigate();
   const { gym } = useAuth();
+
+  // Auto-detect format based on content requirements
+  const detectContentFormat = () => {
+    const requirements = typeof contentData.requirements === 'string' 
+      ? JSON.parse(contentData.requirements) 
+      : contentData.requirements;
+    
+    const hasVideoRequirements = requirements.some((req: any) => 
+      req.type?.toLowerCase().includes('video') || 
+      req.name?.toLowerCase().includes('video') ||
+      req.name?.toLowerCase().includes('reel')
+    );
+    
+    return hasVideoRequirements ? 'video' : 'photo';
+  };
+
+  const contentFormat = detectContentFormat();
+  const requirements = typeof contentData.requirements === 'string' 
+    ? JSON.parse(contentData.requirements) 
+    : contentData.requirements;
 
   // Load existing progress from database
   useEffect(() => {
@@ -38,7 +55,7 @@ export function ContentGuide({ open, onClose, contentId, contentData }: ContentG
         .select('*')
         .eq('content_id', contentId)
         .eq('gym_id', gym.id)
-        .eq('selected_format', selectedFormat)
+        .eq('selected_format', contentFormat)
         .single();
 
       if (data && !error) {
@@ -49,7 +66,7 @@ export function ContentGuide({ open, onClose, contentId, contentData }: ContentG
     if (open) {
       loadProgress();
     }
-  }, [open, contentId, gym?.id, selectedFormat]);
+  }, [open, contentId, gym?.id, contentFormat]);
 
   // Save progress to database
   const saveProgressToDatabase = async (progressUpdate: { [key: string]: number }, filesUpdate: { [key: string]: File }) => {
@@ -67,7 +84,7 @@ export function ContentGuide({ open, onClose, contentId, contentData }: ContentG
       .upsert({
         content_id: contentId,
         gym_id: gym.id,
-        selected_format: selectedFormat,
+        selected_format: contentFormat,
         upload_progress: progressUpdate,
         uploaded_files: uploadedFileData,
         status: Object.values(progressUpdate).every(p => p === 100) ? 'completed' : 'in-progress'
@@ -77,16 +94,11 @@ export function ContentGuide({ open, onClose, contentId, contentData }: ContentG
       console.error('Error saving progress:', error);
     }
   };
-  
-  // Parse requirements from the database
-  const requirements = typeof contentData.requirements === 'string' 
-    ? JSON.parse(contentData.requirements) 
-    : contentData.requirements;
 
   const handleFileUpload = (requirementName: string) => {
     const input = document.createElement('input');
     input.type = 'file';
-    input.accept = selectedFormat.includes('video') ? 'video/*' : 'image/*';
+    input.accept = contentFormat === 'video' ? 'video/*' : 'image/*';
     
     input.onchange = (e) => {
       const file = (e.target as HTMLInputElement).files?.[0];
@@ -103,7 +115,6 @@ export function ContentGuide({ open, onClose, contentId, contentData }: ContentG
           if (progress >= 100) {
             clearInterval(interval);
             toast.success(`${requirementName} uploaded successfully!`);
-            // Save progress to database when upload completes
             await saveProgressToDatabase(updatedProgress, updatedFiles);
           }
         }, 200);
@@ -125,7 +136,7 @@ export function ContentGuide({ open, onClose, contentId, contentData }: ContentG
     if (uploadedFilesList.length > 0) {
       sessionStorage.setItem('uploadedFiles', JSON.stringify(uploadedFilesList));
       sessionStorage.setItem('selectedTemplate', contentId.toString());
-      sessionStorage.setItem('contentFormat', selectedFormat);
+      sessionStorage.setItem('contentFormat', contentFormat);
       
       navigate('/editor');
       onClose();
@@ -134,108 +145,83 @@ export function ContentGuide({ open, onClose, contentId, contentData }: ContentG
     }
   };
 
-  const handleSaveDraft = () => {
-    const draftData = {
-      contentId,
-      selectedFormat,
-      uploadedFiles: Object.keys(uploadedFiles),
-      progress: uploadProgress,
-      timestamp: new Date().toISOString()
-    };
-    
-    localStorage.setItem(`draft_${contentId}`, JSON.stringify(draftData));
-    toast.success("Draft saved successfully!");
-  };
-
-  const allRequirementsComplete = requirements.every((req: any) => 
-    uploadProgress[req.name] === 100
-  );
-
-  // Create format versions data for the selector
-  const formatVersions = [
-    {
-      key: 'photo-version',
-      label: 'Photo Version',
-      icon: Camera,
-      required: true,
-      uploadProgress: { completed: 2, total: 3 } // Example progress
-    },
-    {
-      key: 'video-version', 
-      label: 'Video Version',
-      icon: Video,
-      required: true,
-      uploadProgress: { completed: 0, total: 2 } // Example progress
-    },
-    {
-      key: 'story-version',
-      label: 'Story Version', 
-      icon: MessageCircle,
-      required: false,
-      uploadProgress: { completed: 0, total: 1 } // Example progress
-    }
-  ];
-
-  const overallProgress = 40; // Example: 40% complete
-
-  const guideData = {
-    setupPlanning: {
-      photo: contentData.setup_planning_photo,
-      video: contentData.setup_planning_video,
-    },
-    productionTips: {
-      photo: contentData.production_tips_photo,
-      video: contentData.production_tips_video,
-    },
-    uploadTrack: {
-      photo: contentData.upload_track_photo,
-      video: contentData.upload_track_video,
-    },
-  };
+  const completedCount = Object.values(uploadProgress).filter(p => p === 100).length;
+  const overallProgress = requirements.length > 0 ? (completedCount / requirements.length) * 100 : 0;
+  const allRequirementsComplete = requirements.every((req: any) => uploadProgress[req.name] === 100);
 
   return (
     <Dialog open={open} onOpenChange={() => onClose()}>
-      <DialogContent className="max-w-6xl max-h-[90vh] flex flex-col">
+      <DialogContent className="max-w-4xl max-h-[90vh] flex flex-col">
         <DialogHeader className="flex-shrink-0">
-          <DialogTitle className="text-2xl">{contentData.title}</DialogTitle>
-          {contentData.due_date && (
-            <p className="text-sm text-muted-foreground mt-1">
-              Due: {new Date(contentData.due_date).toLocaleDateString()}
-            </p>
-          )}
+          <div className="flex items-center justify-between">
+            <div>
+              <DialogTitle className="text-2xl">{contentData.title}</DialogTitle>
+              {contentData.due_date && (
+                <p className="text-sm text-muted-foreground mt-1">
+                  Due: {new Date(contentData.due_date).toLocaleDateString()}
+                </p>
+              )}
+            </div>
+            <div className="flex items-center gap-2">
+              {contentFormat === 'video' ? <Video className="w-5 h-5" /> : <Camera className="w-5 h-5" />}
+              <Badge variant="outline" className="text-sm">
+                {contentFormat === 'video' ? 'Video Content' : 'Photo Content'}
+              </Badge>
+            </div>
+          </div>
         </DialogHeader>
         
         <div className="flex gap-6 flex-1 min-h-0">
-          <div className="flex flex-col flex-shrink-0">
-            <FormatSelector 
-              selectedFormat={selectedFormat}
-              onFormatChange={setSelectedFormat}
-              formatVersions={formatVersions}
-              overallProgress={overallProgress}
-            />
-            <ContentStats 
-              uploadProgress={uploadProgress}
-              totalRequirements={requirements.length}
-            />
-          </div>
-
+          {/* Content Guide */}
           <div className="flex-1 min-w-0">
-            <ContentTabs 
-              selectedFormat={selectedFormat.includes('video') ? 'video' : 'photo'}
-              guideData={guideData}
-            />
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Settings className="w-5 h-5" />
+                  Content Guidelines
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div>
+                  <h4 className="font-medium mb-2">Setup & Planning</h4>
+                  <ul className="space-y-2 text-sm">
+                    {(contentFormat === 'video' ? contentData.setup_planning_video : contentData.setup_planning_photo).map((item, index) => (
+                      <li key={index} className="flex gap-3">
+                        <div className="w-6 h-6 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center text-xs font-medium flex-shrink-0">
+                          {index + 1}
+                        </div>
+                        <span>{item}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+                <div>
+                  <h4 className="font-medium mb-2">Production Tips</h4>
+                  <ul className="space-y-2 text-sm">
+                    {(contentFormat === 'video' ? contentData.production_tips_video : contentData.production_tips_photo).map((item, index) => (
+                      <li key={index} className="flex gap-3">
+                        <div className="w-6 h-6 bg-green-100 text-green-600 rounded-full flex items-center justify-center text-xs font-medium flex-shrink-0">
+                          {index + 1}
+                        </div>
+                        <span>{item}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </CardContent>
+            </Card>
           </div>
 
-          <div className="flex-shrink-0 overflow-y-auto max-h-full">
-            <div className="w-80 border-l pl-4 mb-4">
-              <div className="pt-2 border-t">
-                <div className="flex justify-between text-sm font-medium mb-2">
-                  <span>Overall:</span>
-                  <span>{Math.round(overallProgress)}% complete</span>
-                </div>
-                <Progress value={overallProgress} className="h-2" />
+          {/* Upload Section */}
+          <div className="flex-shrink-0 w-80">
+            <div className="mb-4">
+              <div className="flex justify-between text-sm font-medium mb-2">
+                <span>Progress:</span>
+                <span>{completedCount}/{requirements.length} complete</span>
               </div>
+              <Progress value={overallProgress} className="h-2" />
             </div>
+            
             <UploadRequirements 
               requirements={requirements}
               uploadProgress={uploadProgress}
@@ -246,19 +232,14 @@ export function ContentGuide({ open, onClose, contentId, contentData }: ContentG
 
         <div className="flex justify-between pt-4 border-t flex-shrink-0">
           <Button variant="outline" onClick={onClose}>
-            Close Guide
+            Close
           </Button>
-          <div className="flex gap-2">
-            <Button variant="outline" onClick={handleSaveDraft}>
-              Save Draft
-            </Button>
-            <Button 
-              onClick={handleStartCreating}
-              disabled={!allRequirementsComplete}
-            >
-              Start Creating {allRequirementsComplete ? '✓' : `(${Object.keys(uploadedFiles).length}/${requirements.length})`}
-            </Button>
-          </div>
+          <Button 
+            onClick={handleStartCreating}
+            disabled={!allRequirementsComplete}
+          >
+            Start Creating {allRequirementsComplete ? '✓' : `(${completedCount}/${requirements.length})`}
+          </Button>
         </div>
       </DialogContent>
     </Dialog>
