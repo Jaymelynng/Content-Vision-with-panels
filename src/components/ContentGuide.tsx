@@ -10,7 +10,7 @@ import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
-import { Camera, Video, Image, Settings } from "lucide-react";
+import { Camera, Video, Image, Settings, Maximize2, PanelRightOpen } from "lucide-react";
 import type { ContentIdea } from "@/hooks/useContentIdeas";
 
 interface ContentGuideProps {
@@ -18,9 +18,11 @@ interface ContentGuideProps {
   onClose: () => void;
   contentId: number;
   contentData: ContentIdea;
+  onStartFullscreen?: (files: any[], contentId: number, format: string) => void;
+  onStartSidePanel?: (files: any[], contentId: number, format: string) => void;
 }
 
-export function ContentGuide({ open, onClose, contentId, contentData }: ContentGuideProps) {
+export function ContentGuide({ open, onClose, contentId, contentData, onStartFullscreen, onStartSidePanel }: ContentGuideProps) {
   const [uploadProgress, setUploadProgress] = useState<{ [key: string]: number }>({});
   const [uploadedFiles, setUploadedFiles] = useState<{ [key: string]: File }>({});
   const navigate = useNavigate();
@@ -125,7 +127,7 @@ export function ContentGuide({ open, onClose, contentId, contentData }: ContentG
     input.click();
   };
 
-  const handleStartCreating = () => {
+  const handleStartCreating = (mode: 'fullscreen' | 'sidepanel' | 'editor') => {
     const uploadedFilesList = Object.entries(uploadedFiles).map(([name, file]) => ({
       name: file.name,
       size: file.size,
@@ -135,11 +137,17 @@ export function ContentGuide({ open, onClose, contentId, contentData }: ContentG
     }));
     
     if (uploadedFilesList.length > 0) {
-      sessionStorage.setItem('uploadedFiles', JSON.stringify(uploadedFilesList));
-      sessionStorage.setItem('selectedTemplate', contentId.toString());
-      sessionStorage.setItem('contentFormat', contentFormat);
-      
-      navigate('/editor');
+      if (mode === 'fullscreen') {
+        onStartFullscreen?.(uploadedFilesList, contentId, contentFormat);
+      } else if (mode === 'sidepanel') {
+        onStartSidePanel?.(uploadedFilesList, contentId, contentFormat);
+      } else {
+        // Legacy editor mode
+        sessionStorage.setItem('uploadedFiles', JSON.stringify(uploadedFilesList));
+        sessionStorage.setItem('selectedTemplate', contentId.toString());
+        sessionStorage.setItem('contentFormat', contentFormat);
+        navigate('/editor');
+      }
       onClose();
     } else {
       toast.error("Please upload at least one clip before starting to create.");
@@ -327,12 +335,32 @@ export function ContentGuide({ open, onClose, contentId, contentData }: ContentG
           <Button variant="outline" onClick={onClose}>
             Close
           </Button>
-          <Button 
-            onClick={handleStartCreating}
-            disabled={!allRequirementsComplete}
-          >
-            Start Creating {allRequirementsComplete ? '✓' : `(${completedCount}/${requirements.length})`}
-          </Button>
+          <div className="flex gap-2">
+            <Button 
+              variant="outline"
+              onClick={() => handleStartCreating('fullscreen')}
+              disabled={!allRequirementsComplete}
+              className="flex items-center gap-2"
+            >
+              <Maximize2 className="w-4 h-4" />
+              Fullscreen
+            </Button>
+            <Button 
+              variant="outline"
+              onClick={() => handleStartCreating('sidepanel')}
+              disabled={!allRequirementsComplete}
+              className="flex items-center gap-2"
+            >
+              <PanelRightOpen className="w-4 h-4" />
+              Side Panel
+            </Button>
+            <Button 
+              onClick={() => handleStartCreating('editor')}
+              disabled={!allRequirementsComplete}
+            >
+              Editor {allRequirementsComplete ? '✓' : `(${completedCount}/${requirements.length})`}
+            </Button>
+          </div>
         </div>
       </DialogContent>
     </Dialog>

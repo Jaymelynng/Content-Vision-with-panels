@@ -11,9 +11,11 @@ interface ContentCardProps {
   idea: ContentIdea;
   isFavorite: boolean;
   onToggleFavorite: (id: number) => void;
+  onStartFullscreen?: (files: any[], contentId: number, format: string) => void;
+  onStartSidePanel?: (files: any[], contentId: number, format: string) => void;
 }
 
-const ContentCard = ({ idea, isFavorite, onToggleFavorite }: ContentCardProps) => {
+const ContentCard = ({ idea, isFavorite, onToggleFavorite, onStartFullscreen, onStartSidePanel }: ContentCardProps) => {
   const [showGuide, setShowGuide] = useState(false);
 
   return (
@@ -99,6 +101,8 @@ const ContentCard = ({ idea, isFavorite, onToggleFavorite }: ContentCardProps) =
         onClose={() => setShowGuide(false)}
         contentId={idea.id}
         contentData={idea}
+        onStartFullscreen={onStartFullscreen}
+        onStartSidePanel={onStartSidePanel}
       />
     </>
   );

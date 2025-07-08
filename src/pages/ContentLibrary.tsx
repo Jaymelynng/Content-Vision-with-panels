@@ -2,6 +2,7 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { Search, Filter, Shield } from "lucide-react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -12,9 +13,26 @@ import { useContentCategories } from "@/hooks/useAppSettings";
 import { AuthGuard } from "@/components/AuthGuard";
 import { UserNav } from "@/components/UserNav";
 import { useIsAdmin } from "@/hooks/useUserRole";
+import { AssignedTaskMode } from "@/components/AssignedTaskMode";
 
 const ContentLibrary = () => {
   const [searchTerm, setSearchTerm] = useState("");
+  const [sidePanelOpen, setSidePanelOpen] = useState(false);
+  const [fullscreenMode, setFullscreenMode] = useState(false);
+  const [taskData, setTaskData] = useState<{
+    files: any[];
+    contentId: number;
+    format: string;
+  } | null>(null);
+  
+  // Video editor states
+  const [clips, setClips] = useState<any[]>([]);
+  const [currentTime, setCurrentTime] = useState(0);
+  const [totalDuration, setTotalDuration] = useState(0);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [volume, setVolume] = useState(1);
+  const [aiEditing, setAiEditing] = useState(false);
+  
   const navigate = useNavigate();
   const { data: ideas = [], isLoading } = useContentIdeas();
   const { data: favorites = [] } = useUserFavorites();
@@ -25,6 +43,34 @@ const ContentLibrary = () => {
   const handleToggleFavorite = (id: number) => {
     const isFavorite = favorites.includes(id);
     toggleFavorite.mutate({ contentId: id, isFavorite });
+  };
+
+  const handleStartFullscreen = (files: any[], contentId: number, format: string) => {
+    setTaskData({ files, contentId, format });
+    setClips(files.map((file, index) => ({
+      id: `clip-${index}`,
+      name: file.name,
+      duration: 10, // Default duration, would need to get actual duration
+      startTime: index * 10,
+      trimStart: 0,
+      trimEnd: 10,
+      url: file.url
+    })));
+    setFullscreenMode(true);
+  };
+
+  const handleStartSidePanel = (files: any[], contentId: number, format: string) => {
+    setTaskData({ files, contentId, format });
+    setClips(files.map((file, index) => ({
+      id: `clip-${index}`,
+      name: file.name,
+      duration: 10, // Default duration, would need to get actual duration
+      startTime: index * 10,
+      trimStart: 0,
+      trimEnd: 10,
+      url: file.url
+    })));
+    setSidePanelOpen(true);
   };
   
   const filteredContent = ideas.filter(idea => 
@@ -39,6 +85,37 @@ const ContentLibrary = () => {
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900 mx-auto"></div>
           <p className="mt-4 text-gray-600">Loading content...</p>
         </div>
+      </div>
+    );
+  }
+
+  // Handle fullscreen mode
+  if (fullscreenMode && taskData) {
+    return (
+      <div className="fixed inset-0 z-50 bg-background">
+        <AssignedTaskMode
+          clips={clips}
+          onClipsChange={setClips}
+          currentTime={currentTime}
+          totalDuration={totalDuration}
+          isPlaying={isPlaying}
+          volume={volume}
+          onTimeUpdate={setCurrentTime}
+          onDurationChange={setTotalDuration}
+          onSeek={setCurrentTime}
+          onPlayPause={() => setIsPlaying(!isPlaying)}
+          onVolumeChange={setVolume}
+          aiEditing={aiEditing}
+          onAIEditingChange={setAiEditing}
+        />
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => setFullscreenMode(false)}
+          className="absolute top-4 left-4 z-10"
+        >
+          Exit Fullscreen
+        </Button>
       </div>
     );
   }
@@ -102,11 +179,41 @@ const ContentLibrary = () => {
                 ideas={category.name === 'all' ? filteredContent : 
                        filteredContent.filter((idea) => idea.category === category.name)} 
                 favorites={favorites} 
-                onToggleFavorite={handleToggleFavorite} 
+                onToggleFavorite={handleToggleFavorite}
+                onStartFullscreen={handleStartFullscreen}
+                onStartSidePanel={handleStartSidePanel}
               />
             </TabsContent>
           ))}
         </Tabs>
+
+        {/* Side Panel */}
+        <Sheet open={sidePanelOpen} onOpenChange={setSidePanelOpen}>
+          <SheetContent side="right" className="w-[90vw] max-w-none p-0">
+            <SheetHeader className="p-6 pb-0">
+              <SheetTitle>Content Editor</SheetTitle>
+            </SheetHeader>
+            <div className="p-6 pt-4">
+              {taskData && (
+                <AssignedTaskMode
+                  clips={clips}
+                  onClipsChange={setClips}
+                  currentTime={currentTime}
+                  totalDuration={totalDuration}
+                  isPlaying={isPlaying}
+                  volume={volume}
+                  onTimeUpdate={setCurrentTime}
+                  onDurationChange={setTotalDuration}
+                  onSeek={setCurrentTime}
+                  onPlayPause={() => setIsPlaying(!isPlaying)}
+                  onVolumeChange={setVolume}
+                  aiEditing={aiEditing}
+                  onAIEditingChange={setAiEditing}
+                />
+              )}
+            </div>
+          </SheetContent>
+        </Sheet>
       </div>
     </AuthGuard>
   );
