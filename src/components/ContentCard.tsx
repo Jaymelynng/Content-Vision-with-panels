@@ -87,10 +87,10 @@ const ContentCard = ({ idea, isFavorite, onToggleFavorite }: ContentCardProps) =
             className="flex-1 text-sm"
             onClick={() => setShowGuide(true)}
           >
-            View Guide
+            Start Task
           </Button>
           <Button variant="outline" size="sm">
-            Create
+            Submit
           </Button>
         </CardFooter>
       </Card>
