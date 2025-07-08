@@ -78,12 +78,12 @@ export function AssignedTaskMode({
       {/* Three Panel Layout */}
       <div className={`grid gap-6 ${isFullscreen ? 'grid-cols-12 h-screen p-6' : 'lg:grid-cols-12'}`}>
         {/* Left Panel - Template Requirements */}
-        <div className={`${isFullscreen ? 'col-span-3' : 'lg:col-span-2'} space-y-6`}>
+        <div className={`${isFullscreen ? 'col-span-2' : 'lg:col-span-2'} space-y-6`}>
           <TemplateRequirements />
         </div>
 
         {/* Center Panel - Video Editor */}
-        <div className={`${isFullscreen ? 'col-span-6' : 'lg:col-span-7'}`}>
+        <div className={`${isFullscreen ? 'col-span-8' : 'lg:col-span-8'}`}>
           <EditorVideoSection
             clips={clips}
             onClipsChange={onClipsChange}
@@ -103,7 +103,7 @@ export function AssignedTaskMode({
         </div>
 
         {/* Right Panel - AI Suggestions */}
-        <div className={`${isFullscreen ? 'col-span-3' : 'lg:col-span-3'} space-y-6`}>
+        <div className={`${isFullscreen ? 'col-span-2' : 'lg:col-span-2'} space-y-6`}>
           <AISuggestions />
         </div>
       </div>
