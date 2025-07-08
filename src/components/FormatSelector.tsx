@@ -1,63 +1,104 @@
 
-import { Checkbox } from "@/components/ui/checkbox";
-import { Camera, Video, Image, RotateCcw, MessageCircle } from "lucide-react";
-import { Label } from "@/components/ui/label";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Badge } from "@/components/ui/badge";
+import { Camera, Video, MessageCircle, CheckCircle, Clock } from "lucide-react";
+import { Progress } from "@/components/ui/progress";
 
-interface FormatSelectorProps {
-  selectedFormats: string[];
-  onFormatChange: (formats: string[]) => void;
+interface FormatVersion {
+  key: string;
+  label: string;
+  icon: any;
+  required: boolean;
+  uploadProgress: { completed: number; total: number };
 }
 
-export function FormatSelector({ selectedFormats, onFormatChange }: FormatSelectorProps) {
-  
-  // Complete format options as requested
-  const availableFormats = [
-    { key: 'static-photo', label: 'Static Photo', sublabel: 'Single image', icon: Camera },
-    { key: 'carousel', label: 'Carousel Images', sublabel: 'Multi-photo post, 2-10 images', icon: Image },
-    { key: 'animated-image', label: 'Animated Image', sublabel: 'GIF/Motion photo', icon: RotateCcw },
-    { key: 'video-reel', label: 'Video/Reel', sublabel: 'Vertical format', icon: Video },
-    { key: 'story', label: 'Story', sublabel: 'Short-form content', icon: MessageCircle }
-  ];
+interface FormatSelectorProps {
+  selectedFormat: string;
+  onFormatChange: (format: string) => void;
+  formatVersions: FormatVersion[];
+  overallProgress: number;
+}
 
-  const handleFormatToggle = (formatKey: string) => {
-    const newFormats = selectedFormats.includes(formatKey)
-      ? selectedFormats.filter(f => f !== formatKey)
-      : [...selectedFormats, formatKey];
-    onFormatChange(newFormats);
+export function FormatSelector({ 
+  selectedFormat, 
+  onFormatChange, 
+  formatVersions,
+  overallProgress 
+}: FormatSelectorProps) {
+  
+  const getProgressIcon = (progress: { completed: number; total: number }) => {
+    if (progress.completed === progress.total && progress.total > 0) {
+      return <CheckCircle className="w-4 h-4 text-green-600" />;
+    }
+    return <Clock className="w-4 h-4 text-orange-600" />;
+  };
+
+  const getProgressText = (progress: { completed: number; total: number }) => {
+    return `${progress.completed}/${progress.total} uploaded`;
   };
 
   return (
-    <div className="w-64 border-r pr-4">
-      <h3 className="font-semibold mb-4">Content Format</h3>
-      <div className="space-y-3">
-        <p className="text-sm text-muted-foreground mb-3">Select Required Formats:</p>
-        {availableFormats.map((format) => {
-          const IconComponent = format.icon;
-          const isSelected = selectedFormats.includes(format.key);
-          
-          return (
-            <div key={format.key} className="flex items-start space-x-3">
-              <Checkbox
-                id={format.key}
-                checked={isSelected}
-                onCheckedChange={() => handleFormatToggle(format.key)}
-                className="mt-1"
-              />
-              <div className="flex-1 cursor-pointer" onClick={() => handleFormatToggle(format.key)}>
-                <Label 
-                  htmlFor={format.key} 
-                  className="flex items-center gap-2 cursor-pointer"
-                >
-                  <IconComponent className="w-4 h-4" />
-                  <div>
-                    <div className="font-medium">{format.label}</div>
-                    <div className="text-xs text-muted-foreground">{format.sublabel}</div>
-                  </div>
-                </Label>
+    <div className="w-80 border-r pr-6">
+      <div className="mb-6">
+        <h3 className="font-semibold mb-2">Assignment Progress</h3>
+        <div className="space-y-3">
+          {formatVersions.map((version) => (
+            <div key={version.key} className="flex items-center justify-between text-sm">
+              <div className="flex items-center gap-2">
+                <version.icon className="w-4 h-4" />
+                <span>{version.label}:</span>
+                {version.required && <Badge variant="secondary" className="text-xs">Required</Badge>}
+              </div>
+              <div className="flex items-center gap-2">
+                {getProgressIcon(version.uploadProgress)}
+                <span className="text-xs text-muted-foreground">
+                  {getProgressText(version.uploadProgress)}
+                </span>
               </div>
             </div>
-          );
-        })}
+          ))}
+          
+          <div className="pt-2 border-t">
+            <div className="flex justify-between text-sm font-medium mb-2">
+              <span>Overall:</span>
+              <span>{Math.round(overallProgress)}% complete</span>
+            </div>
+            <Progress value={overallProgress} className="h-2" />
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <h3 className="font-semibold mb-4">Format Versions</h3>
+        <Tabs value={selectedFormat} onValueChange={onFormatChange} className="w-full">
+          <TabsList className="grid w-full grid-cols-1 gap-1 h-auto p-1">
+            {formatVersions.map((version) => {
+              const IconComponent = version.icon;
+              const isComplete = version.uploadProgress.completed === version.uploadProgress.total && version.uploadProgress.total > 0;
+              
+              return (
+                <TabsTrigger 
+                  key={version.key} 
+                  value={version.key}
+                  className="flex items-center justify-between w-full p-3 h-auto data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
+                >
+                  <div className="flex items-center gap-2">
+                    <IconComponent className="w-4 h-4" />
+                    <span>{version.label}</span>
+                  </div>
+                  <div className="flex items-center gap-1">
+                    {version.required && (
+                      <Badge variant={isComplete ? "default" : "destructive"} className="text-xs">
+                        {version.required ? "Required" : "Optional"}
+                      </Badge>
+                    )}
+                    {isComplete && <CheckCircle className="w-4 h-4 text-green-600" />}
+                  </div>
+                </TabsTrigger>
+              );
+            })}
+          </TabsList>
+        </Tabs>
       </div>
     </div>
   );

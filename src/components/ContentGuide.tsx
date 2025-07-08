@@ -10,6 +10,7 @@ import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
+import { Camera, Video, MessageCircle } from "lucide-react";
 import type { ContentIdea } from "@/hooks/useContentIdeas";
 
 interface ContentGuideProps {
@@ -20,7 +21,7 @@ interface ContentGuideProps {
 }
 
 export function ContentGuide({ open, onClose, contentId, contentData }: ContentGuideProps) {
-  const [selectedFormats, setSelectedFormats] = useState<string[]>(['static-photo']);
+  const [selectedFormat, setSelectedFormat] = useState<string>('photo-version');
   const [uploadProgress, setUploadProgress] = useState<{ [key: string]: number }>({});
   const [uploadedFiles, setUploadedFiles] = useState<{ [key: string]: File }>({});
   const navigate = useNavigate();
@@ -36,7 +37,7 @@ export function ContentGuide({ open, onClose, contentId, contentData }: ContentG
         .select('*')
         .eq('content_id', contentId)
         .eq('gym_id', gym.id)
-        .eq('selected_format', selectedFormats[0] || 'static-photo')
+        .eq('selected_format', selectedFormat)
         .single();
 
       if (data && !error) {
@@ -47,7 +48,7 @@ export function ContentGuide({ open, onClose, contentId, contentData }: ContentG
     if (open) {
       loadProgress();
     }
-  }, [open, contentId, gym?.id, selectedFormats]);
+  }, [open, contentId, gym?.id, selectedFormat]);
 
   // Save progress to database
   const saveProgressToDatabase = async (progressUpdate: { [key: string]: number }, filesUpdate: { [key: string]: File }) => {
@@ -65,7 +66,7 @@ export function ContentGuide({ open, onClose, contentId, contentData }: ContentG
       .upsert({
         content_id: contentId,
         gym_id: gym.id,
-        selected_format: selectedFormats[0] || 'static-photo',
+        selected_format: selectedFormat,
         upload_progress: progressUpdate,
         uploaded_files: uploadedFileData,
         status: Object.values(progressUpdate).every(p => p === 100) ? 'completed' : 'in-progress'
@@ -84,7 +85,7 @@ export function ContentGuide({ open, onClose, contentId, contentData }: ContentG
   const handleFileUpload = (requirementName: string) => {
     const input = document.createElement('input');
     input.type = 'file';
-    input.accept = selectedFormats.includes('video-reel') ? 'video/*' : 'image/*';
+    input.accept = selectedFormat.includes('video') ? 'video/*' : 'image/*';
     
     input.onchange = (e) => {
       const file = (e.target as HTMLInputElement).files?.[0];
@@ -123,7 +124,7 @@ export function ContentGuide({ open, onClose, contentId, contentData }: ContentG
     if (uploadedFilesList.length > 0) {
       sessionStorage.setItem('uploadedFiles', JSON.stringify(uploadedFilesList));
       sessionStorage.setItem('selectedTemplate', contentId.toString());
-      sessionStorage.setItem('contentFormat', selectedFormats.join(','));
+      sessionStorage.setItem('contentFormat', selectedFormat);
       
       navigate('/editor');
       onClose();
@@ -135,7 +136,7 @@ export function ContentGuide({ open, onClose, contentId, contentData }: ContentG
   const handleSaveDraft = () => {
     const draftData = {
       contentId,
-      selectedFormats,
+      selectedFormat,
       uploadedFiles: Object.keys(uploadedFiles),
       progress: uploadProgress,
       timestamp: new Date().toISOString()
@@ -148,6 +149,33 @@ export function ContentGuide({ open, onClose, contentId, contentData }: ContentG
   const allRequirementsComplete = requirements.every((req: any) => 
     uploadProgress[req.name] === 100
   );
+
+  // Create format versions data for the selector
+  const formatVersions = [
+    {
+      key: 'photo-version',
+      label: 'Photo Version',
+      icon: Camera,
+      required: true,
+      uploadProgress: { completed: 2, total: 3 } // Example progress
+    },
+    {
+      key: 'video-version', 
+      label: 'Video Version',
+      icon: Video,
+      required: true,
+      uploadProgress: { completed: 0, total: 2 } // Example progress
+    },
+    {
+      key: 'story-version',
+      label: 'Story Version', 
+      icon: MessageCircle,
+      required: false,
+      uploadProgress: { completed: 0, total: 1 } // Example progress
+    }
+  ];
+
+  const overallProgress = 40; // Example: 40% complete
 
   const guideData = {
     setupPlanning: {
@@ -179,8 +207,10 @@ export function ContentGuide({ open, onClose, contentId, contentData }: ContentG
         <div className="flex gap-6 flex-1 min-h-0">
           <div className="flex flex-col flex-shrink-0">
             <FormatSelector 
-              selectedFormats={selectedFormats}
-              onFormatChange={setSelectedFormats}
+              selectedFormat={selectedFormat}
+              onFormatChange={setSelectedFormat}
+              formatVersions={formatVersions}
+              overallProgress={overallProgress}
             />
             <ContentStats 
               uploadProgress={uploadProgress}
@@ -190,7 +220,7 @@ export function ContentGuide({ open, onClose, contentId, contentData }: ContentG
 
           <div className="flex-1 min-w-0">
             <ContentTabs 
-              selectedFormat={selectedFormats.includes('video-reel') ? 'video' : 'photo'}
+              selectedFormat={selectedFormat.includes('video') ? 'video' : 'photo'}
               guideData={guideData}
             />
           </div>
