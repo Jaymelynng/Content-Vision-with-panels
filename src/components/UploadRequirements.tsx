@@ -4,6 +4,7 @@ import { Progress } from "@/components/ui/progress";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Upload, Check, Clock } from "lucide-react";
 import { useAppSettings } from "@/hooks/useAppSettings";
+import { FileUploadDropzone } from "./FileUploadDropzone";
 
 interface Requirement {
   name: string;
@@ -16,22 +17,29 @@ interface Requirement {
 interface UploadRequirementsProps {
   requirements: Requirement[];
   uploadProgress: { [key: string]: number };
-  uploadedFiles: { [key: string]: File };
-  onFileUpload: (requirementName: string) => void;
+  uploadedFiles: { [key: string]: { file: File; url: string } };
+  onFileUpload: (requirementName: string, file: File) => void;
+  isUploading: { [key: string]: boolean };
+  contentFormat: string;
 }
 
-export function UploadRequirements({ requirements, uploadProgress, uploadedFiles, onFileUpload }: UploadRequirementsProps) {
+export function UploadRequirements({ requirements, uploadProgress, uploadedFiles, onFileUpload, isUploading, contentFormat }: UploadRequirementsProps) {
   const { data: appSettings } = useAppSettings();
   const fileRequirements = appSettings?.file_requirements || {};
   
+  const handleFileSelect = (requirementName: string, file: File) => {
+    onFileUpload(requirementName, file);
+  };
+  
   return (
-    <div className="w-80 flex flex-col h-full">
+    <div className="w-full flex flex-col h-full">
       <h3 className="font-semibold mb-4 flex-shrink-0 text-gray-800">Upload Requirements</h3>
       
       <ScrollArea className="flex-1">
         <div className="space-y-3 pr-4">
           {requirements.map((req, index) => {
             const uploadedFile = uploadedFiles[req.name];
+            const isCurrentlyUploading = isUploading[req.name];
             
             return (
               <div 
@@ -74,9 +82,9 @@ export function UploadRequirements({ requirements, uploadProgress, uploadedFiles
                 {uploadedFile && uploadProgress[req.name] === 100 && (
                   <div className="mb-3 p-2 bg-gray-50 rounded border">
                     <div className="aspect-video bg-gray-200 rounded overflow-hidden">
-                      {uploadedFile.type.startsWith('video/') ? (
+                      {uploadedFile.file.type.startsWith('video/') ? (
                         <video 
-                          src={URL.createObjectURL(uploadedFile)} 
+                          src={uploadedFile.url} 
                           className="w-full h-full object-cover"
                           autoPlay
                           muted
@@ -85,14 +93,14 @@ export function UploadRequirements({ requirements, uploadProgress, uploadedFiles
                         />
                       ) : (
                         <img 
-                          src={URL.createObjectURL(uploadedFile)} 
+                          src={uploadedFile.url} 
                           alt={req.name}
                           className="w-full h-full object-cover"
                         />
                       )}
                     </div>
                     <div className="mt-1 text-xs text-gray-600 text-center">
-                      {uploadedFile.name}
+                      {uploadedFile.file.name}
                     </div>
                   </div>
                 )}
@@ -108,27 +116,30 @@ export function UploadRequirements({ requirements, uploadProgress, uploadedFiles
                   </div>
                 )}
                 
-                <Button
-                  size="sm"
-                  variant={uploadProgress[req.name] === 100 ? "secondary" : "outline"}
-                  className={`w-full transition-all duration-300 ${
-                    uploadProgress[req.name] === 100 
-                      ? 'bg-green-100 text-green-700 border-green-200 hover:bg-green-200' 
-                      : 'hover:bg-blue-50 hover:border-blue-300 hover:scale-105'
-                  }`}
-                  onClick={() => onFileUpload(req.name)}
-                  disabled={uploadProgress[req.name] === 100}
-                >
-                  <Upload className={`w-3 h-3 mr-2 ${uploadProgress[req.name] === 100 ? 'hidden' : ''}`} />
-                  {uploadProgress[req.name] === 100 ? (
-                    <span className="flex items-center gap-1">
-                      <Check className="w-3 h-3" />
-                      Uploaded Successfully
-                    </span>
-                  ) : (
-                    'Upload Clip'
-                  )}
-                </Button>
+                {/* Upload dropzone or button */}
+                {uploadProgress[req.name] !== 100 && !isCurrentlyUploading ? (
+                  <FileUploadDropzone
+                    onFileSelect={(file) => handleFileSelect(req.name, file)}
+                    accept={contentFormat === 'video' ? 'video/*' : 'image/*'}
+                    className="h-16 text-xs"
+                    requirement={req}
+                  />
+                ) : uploadProgress[req.name] === 100 ? (
+                  <Button
+                    size="sm"
+                    variant="secondary"
+                    className="w-full bg-green-100 text-green-700 border-green-200 hover:bg-green-200"
+                    disabled
+                  >
+                    <Check className="w-3 h-3 mr-2" />
+                    Uploaded Successfully
+                  </Button>
+                ) : (
+                  <div className="flex items-center justify-center py-4 text-sm text-blue-600">
+                    <div className="w-4 h-4 border-2 border-blue-500 border-t-transparent rounded-full animate-spin mr-2" />
+                    Uploading...
+                  </div>
+                )}
               </div>
             );
           })}
