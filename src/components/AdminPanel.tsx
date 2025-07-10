@@ -3,12 +3,13 @@ import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Settings, FileText, Users, Plus, MessageSquare } from 'lucide-react';
+import { Settings, FileText, Users, Plus, MessageSquare, Calendar } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { ContentIdeasManager } from './admin/ContentIdeasManager';
 import { AppSettingsManager } from './admin/AppSettingsManager';
 import { ContentCategoriesManager } from './admin/ContentCategoriesManager';
 import { SubmissionReviewDashboard } from './admin/SubmissionReviewDashboard';
+import { MonthManager } from './admin/MonthManager';
 
 export function AdminPanel() {
   const { gym } = useAuth();
@@ -48,11 +49,15 @@ export function AdminPanel() {
         </p>
       </div>
 
-      <Tabs defaultValue="reviews" className="w-full">
-        <TabsList className="grid w-full grid-cols-4">
+      <Tabs defaultValue="months" className="w-full">
+        <TabsList className="grid w-full grid-cols-5">
+          <TabsTrigger value="months" className="flex items-center gap-2">
+            <Calendar className="h-4 w-4" />
+            Month Plans
+          </TabsTrigger>
           <TabsTrigger value="reviews" className="flex items-center gap-2">
             <MessageSquare className="h-4 w-4" />
-            Review Submissions
+            Reviews
           </TabsTrigger>
           <TabsTrigger value="content" className="flex items-center gap-2">
             <FileText className="h-4 w-4" />
@@ -67,6 +72,10 @@ export function AdminPanel() {
             Settings
           </TabsTrigger>
         </TabsList>
+
+        <TabsContent value="months" className="space-y-4">
+          <MonthManager />
+        </TabsContent>
 
         <TabsContent value="reviews" className="space-y-4">
           <SubmissionReviewDashboard />
