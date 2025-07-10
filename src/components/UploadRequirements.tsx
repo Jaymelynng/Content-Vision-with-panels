@@ -12,6 +12,13 @@ interface Requirement {
   type: string;
   completed: boolean;
   description: string;
+  notes?: string;
+}
+
+interface ContentGuideData {
+  postVisual?: string;
+  contentNotes?: string;
+  uploadInstructions?: string;
 }
 
 interface UploadRequirementsProps {
@@ -21,9 +28,10 @@ interface UploadRequirementsProps {
   onFileUpload: (requirementName: string, file: File) => void;
   isUploading: { [key: string]: boolean };
   contentFormat: string;
+  contentGuideData?: ContentGuideData;
 }
 
-export function UploadRequirements({ requirements, uploadProgress, uploadedFiles, onFileUpload, isUploading, contentFormat }: UploadRequirementsProps) {
+export function UploadRequirements({ requirements, uploadProgress, uploadedFiles, onFileUpload, isUploading, contentFormat, contentGuideData }: UploadRequirementsProps) {
   const { data: appSettings } = useAppSettings();
   const fileRequirements = appSettings?.file_requirements || {};
   
@@ -33,6 +41,44 @@ export function UploadRequirements({ requirements, uploadProgress, uploadedFiles
   
   return (
     <div className="w-full flex flex-col h-full">
+      {/* Content Guide Sections */}
+      {contentGuideData && (
+        <div className="mb-6 space-y-4 flex-shrink-0">
+          {contentGuideData.postVisual && (
+            <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg p-4 border border-blue-200">
+              <h4 className="font-semibold text-sm mb-2 text-blue-800 flex items-center gap-2">
+                🎯 Post Visual
+              </h4>
+              <p className="text-sm text-gray-700 leading-relaxed">
+                {contentGuideData.postVisual}
+              </p>
+            </div>
+          )}
+          
+          {contentGuideData.contentNotes && (
+            <div className="bg-gradient-to-r from-amber-50 to-orange-50 rounded-lg p-4 border border-amber-200">
+              <h4 className="font-semibold text-sm mb-2 text-amber-800 flex items-center gap-2">
+                📌 Content Notes
+              </h4>
+              <p className="text-sm text-gray-700 leading-relaxed">
+                {contentGuideData.contentNotes}
+              </p>
+            </div>
+          )}
+          
+          {contentGuideData.uploadInstructions && (
+            <div className="bg-gradient-to-r from-green-50 to-emerald-50 rounded-lg p-4 border border-green-200">
+              <h4 className="font-semibold text-sm mb-2 text-green-800 flex items-center gap-2">
+                🎥 Upload Instructions
+              </h4>
+              <p className="text-sm text-gray-700 leading-relaxed">
+                {contentGuideData.uploadInstructions}
+              </p>
+            </div>
+          )}
+        </div>
+      )}
+      
       <h3 className="font-semibold mb-4 flex-shrink-0 text-gray-800">Upload Requirements</h3>
       
       <ScrollArea className="flex-1">
@@ -77,6 +123,13 @@ export function UploadRequirements({ requirements, uploadProgress, uploadedFiles
                 <div className="text-xs text-gray-600 mb-3 leading-relaxed">
                   {req.description}
                 </div>
+                
+                {req.notes && (
+                  <div className="text-xs text-blue-700 mb-3 p-2 bg-blue-50 rounded border border-blue-200">
+                    <span className="font-medium">Notes: </span>
+                    {req.notes}
+                  </div>
+                )}
                 
                 {/* Thumbnail Preview */}
                 {uploadedFile && uploadProgress[req.name] === 100 && (

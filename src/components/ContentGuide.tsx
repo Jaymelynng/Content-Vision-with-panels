@@ -51,6 +51,24 @@ export function ContentGuide({ open, onClose, contentId, contentData, onStartFul
     ? JSON.parse(contentData.requirements) 
     : contentData.requirements;
 
+  // Extract content guide data from description and other fields
+  const parseContentGuideData = () => {
+    const description = contentData.description || '';
+    
+    // Try to extract structured content from description
+    const postVisualMatch = description.match(/🎯\s*\*\*Post Visual:\*\*(.*?)(?=📌|🎥|$)/s);
+    const contentNotesMatch = description.match(/📌\s*\*\*Content Notes:\*\*(.*?)(?=🎯|🎥|$)/s);
+    const uploadInstructionsMatch = description.match(/🎥\s*(?:\*\*)?(?:UPLOAD|Upload)(?:\*\*)?(.*?)(?=🎯|📌|$)/s);
+    
+    return {
+      postVisual: postVisualMatch ? postVisualMatch[1].trim() : description,
+      contentNotes: contentNotesMatch ? contentNotesMatch[1].trim() : undefined,
+      uploadInstructions: uploadInstructionsMatch ? uploadInstructionsMatch[1].trim() : undefined,
+    };
+  };
+
+  const contentGuideData = parseContentGuideData();
+
   // Load existing progress from database
   useEffect(() => {
     const loadProgress = async () => {
@@ -337,6 +355,7 @@ export function ContentGuide({ open, onClose, contentId, contentData, onStartFul
               onFileUpload={handleFileUpload}
               isUploading={isUploading}
               contentFormat={contentFormat}
+              contentGuideData={contentGuideData}
             />
           </div>
         </div>

@@ -24,6 +24,7 @@ interface UploadRequirement {
   duration: string;
   description: string;
   type: string;
+  notes?: string;
 }
 
 export function EnhancedContentIdeaEditor({ contentIdea, onClose }: EnhancedContentIdeaEditorProps) {
@@ -98,7 +99,8 @@ export function EnhancedContentIdeaEditor({ contentIdea, onClose }: EnhancedCont
       name: '',
       duration: '',
       description: '',
-      type: 'photo'
+      type: 'photo',
+      notes: ''
     }]);
   };
 
@@ -412,6 +414,13 @@ export function EnhancedContentIdeaEditor({ contentIdea, onClose }: EnhancedCont
                       value={req.description}
                       onChange={(e) => updateUploadRequirement(index, 'description', e.target.value)}
                       rows={2}
+                    />
+                    <Textarea
+                      placeholder="Additional notes for upload (optional)"
+                      value={req.notes || ''}
+                      onChange={(e) => updateUploadRequirement(index, 'notes', e.target.value)}
+                      rows={2}
+                      className="bg-blue-50 border-blue-200"
                     />
                   </div>
                 ))}
