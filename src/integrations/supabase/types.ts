@@ -329,6 +329,50 @@ export type Database = {
           },
         ]
       }
+      submission_comments: {
+        Row: {
+          comment_text: string
+          comment_type: string
+          created_at: string
+          gym_id: string
+          id: string
+          is_admin: boolean
+          progress_id: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          comment_text: string
+          comment_type?: string
+          created_at?: string
+          gym_id: string
+          id?: string
+          is_admin?: boolean
+          progress_id: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          comment_text?: string
+          comment_type?: string
+          created_at?: string
+          gym_id?: string
+          id?: string
+          is_admin?: boolean
+          progress_id?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "submission_comments_progress_id_fkey"
+            columns: ["progress_id"]
+            isOneToOne: false
+            referencedRelation: "user_content_progress"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       uploaded_documents: {
         Row: {
           created_at: string
@@ -381,42 +425,57 @@ export type Database = {
       }
       user_content_progress: {
         Row: {
+          admin_approved: boolean | null
+          admin_feedback_required: boolean | null
+          admin_reviewed: boolean | null
           assignment_month: string | null
           content_id: number | null
           created_at: string | null
           draft_data: Json | null
           gym_id: string | null
           id: string
+          last_comment_id: string | null
           selected_format: string
           status: string | null
+          submission_notes: string | null
           updated_at: string | null
           upload_progress: Json | null
           uploaded_files: Json | null
           user_id: string | null
         }
         Insert: {
+          admin_approved?: boolean | null
+          admin_feedback_required?: boolean | null
+          admin_reviewed?: boolean | null
           assignment_month?: string | null
           content_id?: number | null
           created_at?: string | null
           draft_data?: Json | null
           gym_id?: string | null
           id?: string
+          last_comment_id?: string | null
           selected_format: string
           status?: string | null
+          submission_notes?: string | null
           updated_at?: string | null
           upload_progress?: Json | null
           uploaded_files?: Json | null
           user_id?: string | null
         }
         Update: {
+          admin_approved?: boolean | null
+          admin_feedback_required?: boolean | null
+          admin_reviewed?: boolean | null
           assignment_month?: string | null
           content_id?: number | null
           created_at?: string | null
           draft_data?: Json | null
           gym_id?: string | null
           id?: string
+          last_comment_id?: string | null
           selected_format?: string
           status?: string | null
+          submission_notes?: string | null
           updated_at?: string | null
           upload_progress?: Json | null
           uploaded_files?: Json | null
@@ -435,6 +494,13 @@ export type Database = {
             columns: ["gym_id"]
             isOneToOne: false
             referencedRelation: "gym_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "user_content_progress_last_comment_id_fkey"
+            columns: ["last_comment_id"]
+            isOneToOne: false
+            referencedRelation: "submission_comments"
             referencedColumns: ["id"]
           },
         ]

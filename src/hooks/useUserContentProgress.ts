@@ -11,6 +11,11 @@ export interface UserContentProgress {
   uploaded_files: any[];
   created_at: string;
   updated_at: string;
+  admin_reviewed?: boolean;
+  admin_approved?: boolean;
+  admin_feedback_required?: boolean;
+  submission_notes?: string;
+  assignment_month?: string;
 }
 
 export function useUserContentProgress() {

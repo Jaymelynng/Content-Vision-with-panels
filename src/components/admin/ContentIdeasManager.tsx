@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Plus, Edit, Trash2 } from 'lucide-react';
 import { useContentIdeas } from '@/hooks/useContentIdeas';
-import { ContentIdeaEditor } from './ContentIdeaEditor';
+import { EnhancedContentIdeaEditor } from './EnhancedContentIdeaEditor';
 import type { ContentIdea } from '@/hooks/useContentIdeas';
 
 export function ContentIdeasManager() {
@@ -18,7 +18,7 @@ export function ContentIdeasManager() {
 
   if (isCreating || editingIdea) {
     return (
-      <ContentIdeaEditor
+      <EnhancedContentIdeaEditor
         contentIdea={editingIdea}
         onClose={() => {
           setIsCreating(false);
