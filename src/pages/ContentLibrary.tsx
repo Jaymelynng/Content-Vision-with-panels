@@ -3,14 +3,15 @@ import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { Shield, CheckCircle2, Circle, Clock } from "lucide-react";
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import ContentGrid from "@/components/ContentGrid";
-import { useContentAssignments } from "@/hooks/useUserContentProgress";
+import { useContentAssignments, useAvailableMonths } from "@/hooks/useUserContentProgress";
 import { AuthGuard } from "@/components/AuthGuard";
 import { UserNav } from "@/components/UserNav";
 import { useIsAdmin } from "@/hooks/useUserRole";
 import { AssignedTaskMode } from "@/components/AssignedTaskMode";
+import { MonthSelector } from "@/components/MonthSelector";
 
 const ContentLibrary = () => {
   const [statusFilter, setStatusFilter] = useState<'all' | 'not-started' | 'in-progress' | 'completed'>('all');
@@ -31,8 +32,31 @@ const ContentLibrary = () => {
   const [aiEditing, setAiEditing] = useState(false);
   
   const navigate = useNavigate();
-  const { data: assignments = [], isLoading } = useContentAssignments();
+  const { data: availableMonths = [] } = useAvailableMonths();
+  
+  // Default to the most recent month (first in the sorted array)
+  const [selectedMonth, setSelectedMonth] = useState<string>('');
+  
+  // Set default month when available months load
+  useMemo(() => {
+    if (availableMonths.length > 0 && !selectedMonth) {
+      setSelectedMonth(availableMonths[0]);
+    }
+  }, [availableMonths, selectedMonth]);
+  
+  const { data: assignments = [], isLoading } = useContentAssignments(selectedMonth);
   const isAdmin = useIsAdmin();
+  
+  const formatMonthDisplay = (monthYear: string) => {
+    if (!monthYear) return 'Monthly Content Plan';
+    const [year, month] = monthYear.split('-');
+    const monthNames = [
+      'January', 'February', 'March', 'April', 'May', 'June',
+      'July', 'August', 'September', 'October', 'November', 'December'
+    ];
+    const monthIndex = parseInt(month) - 1;
+    return `${monthNames[monthIndex]} ${year} Content Plan`;
+  };
 
   const handleStartFullscreen = (files: any[], contentId: number, format: string) => {
     setTaskData({ files, contentId, format });
@@ -120,7 +144,7 @@ const ContentLibrary = () => {
       <div className="space-y-6">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold tracking-tight">Monthly Content Plan</h1>
+            <h1 className="text-3xl font-bold tracking-tight">{formatMonthDisplay(selectedMonth)}</h1>
             <p className="text-muted-foreground">
               Complete your assigned content for this month
             </p>
@@ -140,6 +164,17 @@ const ContentLibrary = () => {
             )}
           </div>
         </div>
+
+        {/* Month Selector */}
+        {availableMonths.length > 0 && (
+          <div className="flex justify-between items-center">
+            <MonthSelector
+              availableMonths={availableMonths}
+              selectedMonth={selectedMonth}
+              onMonthChange={setSelectedMonth}
+            />
+          </div>
+        )}
 
         {/* Status Filter Tabs */}
         <Tabs value={statusFilter} onValueChange={(value) => setStatusFilter(value as any)} className="w-full">

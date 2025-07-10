@@ -35,14 +35,19 @@ export function useUserContentProgress() {
   });
 }
 
-export function useContentAssignments() {
+export function useContentAssignments(selectedMonth?: string) {
   const { data: ideas = [] } = useQuery({
-    queryKey: ['content-ideas'],
+    queryKey: ['content-ideas', selectedMonth],
     queryFn: async () => {
-      const { data, error } = await supabase
+      let query = supabase
         .from('content_ideas')
-        .select('*')
-        .order('created_at', { ascending: true });
+        .select('*');
+      
+      if (selectedMonth) {
+        query = query.eq('month_year', selectedMonth);
+      }
+      
+      const { data, error } = await query.order('created_at', { ascending: true });
       
       if (error) throw error;
       return data;
@@ -53,7 +58,10 @@ export function useContentAssignments() {
 
   // Merge content ideas with user progress to create assignments
   const assignments = ideas.map(idea => {
-    const userProgress = progress.find(p => p.content_id === idea.id);
+    const userProgress = progress.find(p => 
+      p.content_id === idea.id && 
+      (!selectedMonth || (p as any).assignment_month === selectedMonth)
+    );
     
     return {
       ...idea,
@@ -69,4 +77,21 @@ export function useContentAssignments() {
     data: assignments,
     isLoading: false, // We'll handle loading at the individual query level
   };
+}
+
+export function useAvailableMonths() {
+  return useQuery({
+    queryKey: ['available-months'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('content_ideas')
+        .select('month_year')
+        .order('month_year', { ascending: false });
+      
+      if (error) throw error;
+      
+      const uniqueMonths = [...new Set(data.map(item => item.month_year))].filter(Boolean);
+      return uniqueMonths;
+    },
+  });
 }

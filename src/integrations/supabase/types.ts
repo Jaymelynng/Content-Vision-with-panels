@@ -84,6 +84,7 @@ export type Database = {
           file_requirements: Json | null
           formats: string[]
           id: number
+          month_year: string | null
           production_tips_photo: string[]
           production_tips_video: string[]
           requirements: Json
@@ -108,6 +109,7 @@ export type Database = {
           file_requirements?: Json | null
           formats: string[]
           id?: number
+          month_year?: string | null
           production_tips_photo: string[]
           production_tips_video: string[]
           requirements: Json
@@ -132,6 +134,7 @@ export type Database = {
           file_requirements?: Json | null
           formats?: string[]
           id?: number
+          month_year?: string | null
           production_tips_photo?: string[]
           production_tips_video?: string[]
           requirements?: Json
@@ -378,6 +381,7 @@ export type Database = {
       }
       user_content_progress: {
         Row: {
+          assignment_month: string | null
           content_id: number | null
           created_at: string | null
           draft_data: Json | null
@@ -391,6 +395,7 @@ export type Database = {
           user_id: string | null
         }
         Insert: {
+          assignment_month?: string | null
           content_id?: number | null
           created_at?: string | null
           draft_data?: Json | null
@@ -404,6 +409,7 @@ export type Database = {
           user_id?: string | null
         }
         Update: {
+          assignment_month?: string | null
           content_id?: number | null
           created_at?: string | null
           draft_data?: Json | null
