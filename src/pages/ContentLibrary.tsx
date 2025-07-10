@@ -73,10 +73,12 @@ const ContentLibrary = () => {
     setSidePanelOpen(true);
   };
   
-  const filteredContent = ideas.filter(idea => 
+  console.log('ContentLibrary - ideas:', ideas, 'categories:', categories);
+  
+  const filteredContent = ideas?.filter(idea => 
     idea.title.toLowerCase().includes(searchTerm.toLowerCase()) || 
     idea.description.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  ) || [];
 
   if (isLoading) {
     return (
