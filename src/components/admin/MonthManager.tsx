@@ -22,7 +22,7 @@ export function MonthManager() {
     if (!contentIdeas) return {};
     
     return contentIdeas.reduce((groups, idea) => {
-      const monthKey = idea.month_year || '2025-01';
+      const monthKey = idea.month_year || '2025-06';
       if (!groups[monthKey]) {
         groups[monthKey] = [];
       }

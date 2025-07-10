@@ -51,7 +51,7 @@ export function MonthPlanWizard({ sourceMonth, targetMonth, onClose }: MonthPlan
   const queryClient = useQueryClient();
   const { toast } = useToast();
   
-  const [monthYear, setMonthYear] = useState(targetMonth || '');
+  const [monthYear, setMonthYear] = useState(targetMonth || new Date().toISOString().slice(0, 7));
   const [planPosts, setPlanPosts] = useState<any[]>([]);
   const [selectedTemplate, setSelectedTemplate] = useState<ContentTemplate | null>(null);
   const [step, setStep] = useState<'setup' | 'template' | 'posts' | 'review'>('setup');

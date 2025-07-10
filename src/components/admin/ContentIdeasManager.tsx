@@ -18,7 +18,7 @@ export function ContentIdeasManager() {
   // Get unique months for filtering
   const availableMonths = React.useMemo(() => {
     if (!contentIdeas) return [];
-    const months = [...new Set(contentIdeas.map(idea => idea.month_year || '2025-01'))];
+    const months = [...new Set(contentIdeas.map(idea => idea.month_year || '2025-06'))];
     return months.sort();
   }, [contentIdeas]);
 
@@ -108,7 +108,7 @@ export function ContentIdeasManager() {
                   <div className="flex items-center gap-2 mt-2">
                     <Calendar className="h-3 w-3" />
                     <span className="text-xs text-muted-foreground">
-                      {formatMonthDisplay(idea.month_year || '2025-01')}
+                      {formatMonthDisplay(idea.month_year || '2025-06')}
                     </span>
                   </div>
                 </div>
