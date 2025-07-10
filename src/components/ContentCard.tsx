@@ -1,14 +1,20 @@
 
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Heart, Image, Play, Instagram } from "lucide-react";
-import { getAudienceBadge, getFormatBadge, getStatusIcon } from "@/utils/contentUtils";
+import { Badge } from "@/components/ui/badge";
+import { Image, Play, Instagram, CheckCircle2, Clock, Circle, Calendar } from "lucide-react";
+import { getAudienceBadge, getFormatBadge } from "@/utils/contentUtils";
 import { ContentGuide } from "./ContentGuide";
 import { useState } from "react";
 import type { ContentIdea } from "@/hooks/useContentIdeas";
 
 interface ContentCardProps {
-  idea: ContentIdea;
+  idea: ContentIdea & {
+    status: 'not-started' | 'in-progress' | 'completed';
+    progress: Record<string, number>;
+    uploadedFiles: any[];
+    lastUpdated?: string;
+  };
   isFavorite: boolean;
   onToggleFavorite: (id: number) => void;
   onStartFullscreen?: (files: any[], contentId: number, format: string) => void;
@@ -17,6 +23,45 @@ interface ContentCardProps {
 
 const ContentCard = ({ idea, isFavorite, onToggleFavorite, onStartFullscreen, onStartSidePanel }: ContentCardProps) => {
   const [showGuide, setShowGuide] = useState(false);
+
+  const getStatusIcon = (status: string) => {
+    switch (status) {
+      case 'completed':
+        return <CheckCircle2 className="h-4 w-4 text-green-500" />;
+      case 'in-progress':
+        return <Clock className="h-4 w-4 text-yellow-500" />;
+      default:
+        return <Circle className="h-4 w-4 text-gray-400" />;
+    }
+  };
+
+  const getStatusBadge = (status: string) => {
+    switch (status) {
+      case 'completed':
+        return <Badge variant="secondary" className="bg-green-100 text-green-800">Completed</Badge>;
+      case 'in-progress':
+        return <Badge variant="secondary" className="bg-yellow-100 text-yellow-800">In Progress</Badge>;
+      default:
+        return <Badge variant="outline">Todo</Badge>;
+    }
+  };
+
+  const getProgressPercentage = () => {
+    const progressValues = Object.values(idea.progress);
+    if (progressValues.length === 0) return 0;
+    return Math.round(progressValues.reduce((a, b) => a + b, 0) / progressValues.length);
+  };
+
+  const getButtonText = () => {
+    switch (idea.status) {
+      case 'completed':
+        return 'Review Work';
+      case 'in-progress':
+        return 'Continue';
+      default:
+        return 'Start Task';
+    }
+  };
 
   return (
     <>
@@ -50,15 +95,19 @@ const ContentCard = ({ idea, isFavorite, onToggleFavorite, onStartFullscreen, on
         </CardHeader>
         <CardContent className="pt-4">
           <div className="flex items-start justify-between mb-2">
-            <CardTitle className="text-lg leading-tight">{idea.title}</CardTitle>
-            <div className="flex items-center gap-2">
-              {getStatusIcon('new')}
-              <button 
-                onClick={() => onToggleFavorite(idea.id)} 
-                className="text-muted-foreground hover:text-red-500 transition-colors"
-              >
-                <Heart className={`h-4 w-4 ${isFavorite ? 'fill-red-500 text-red-500' : ''}`} />
-              </button>
+            <div className="flex-1">
+              <div className="flex items-center gap-2 mb-1">
+                <CardTitle className="text-lg leading-tight">{idea.title}</CardTitle>
+                {getStatusIcon(idea.status)}
+              </div>
+              <div className="flex items-center gap-2 mb-2">
+                {getStatusBadge(idea.status)}
+                {idea.status === 'in-progress' && (
+                  <Badge variant="outline" className="text-xs">
+                    {getProgressPercentage()}% complete
+                  </Badge>
+                )}
+              </div>
             </div>
           </div>
           <p className="text-muted-foreground text-sm mb-3 line-clamp-2">{idea.description}</p>
@@ -88,12 +137,16 @@ const ContentCard = ({ idea, isFavorite, onToggleFavorite, onStartFullscreen, on
           <Button 
             className="flex-1 text-sm"
             onClick={() => setShowGuide(true)}
+            variant={idea.status === 'completed' ? 'outline' : 'default'}
           >
-            Start Task
+            {getButtonText()}
           </Button>
-          <Button variant="outline" size="sm">
-            Submit
-          </Button>
+          {idea.lastUpdated && (
+            <div className="flex items-center gap-1 text-xs text-muted-foreground">
+              <Calendar className="h-3 w-3" />
+              {new Date(idea.lastUpdated).toLocaleDateString()}
+            </div>
+          )}
         </CardFooter>
       </Card>
       <ContentGuide 

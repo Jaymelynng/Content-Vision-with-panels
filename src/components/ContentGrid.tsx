@@ -2,8 +2,15 @@
 import ContentCard from "./ContentCard";
 import type { ContentIdea } from "@/hooks/useContentIdeas";
 
+type AssignmentIdea = ContentIdea & {
+  status: 'not-started' | 'in-progress' | 'completed';
+  progress: Record<string, number>;
+  uploadedFiles: any[];
+  lastUpdated?: string;
+};
+
 interface ContentGridProps {
-  ideas: ContentIdea[];
+  ideas: AssignmentIdea[];
   favorites: number[];
   onToggleFavorite: (id: number) => void;
   onStartFullscreen?: (files: any[], contentId: number, format: string) => void;

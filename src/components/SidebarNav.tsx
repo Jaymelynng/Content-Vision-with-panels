@@ -18,7 +18,7 @@ const navItems = [
     icon: LayoutDashboard,
   },
   {
-    title: "My Assignments",
+    title: "Monthly Plan",
     href: "/content-library",
     icon: BookOpen,
   },

@@ -1,22 +1,19 @@
 
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
-import { Search, Filter, Shield } from "lucide-react";
+import { Shield, CheckCircle2, Circle, Clock } from "lucide-react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import ContentGrid from "@/components/ContentGrid";
-import { useContentIdeas } from "@/hooks/useContentIdeas";
-import { useUserFavorites, useToggleFavorite } from "@/hooks/useUserFavorites";
-import { useContentCategories } from "@/hooks/useAppSettings";
+import { useContentAssignments } from "@/hooks/useUserContentProgress";
 import { AuthGuard } from "@/components/AuthGuard";
 import { UserNav } from "@/components/UserNav";
 import { useIsAdmin } from "@/hooks/useUserRole";
 import { AssignedTaskMode } from "@/components/AssignedTaskMode";
 
 const ContentLibrary = () => {
-  const [searchTerm, setSearchTerm] = useState("");
+  const [statusFilter, setStatusFilter] = useState<'all' | 'not-started' | 'in-progress' | 'completed'>('all');
   const [sidePanelOpen, setSidePanelOpen] = useState(false);
   const [fullscreenMode, setFullscreenMode] = useState(false);
   const [taskData, setTaskData] = useState<{
@@ -34,16 +31,8 @@ const ContentLibrary = () => {
   const [aiEditing, setAiEditing] = useState(false);
   
   const navigate = useNavigate();
-  const { data: ideas = [], isLoading } = useContentIdeas();
-  const { data: favorites = [] } = useUserFavorites();
-  const { data: categories = [] } = useContentCategories();
-  const toggleFavorite = useToggleFavorite();
+  const { data: assignments = [], isLoading } = useContentAssignments();
   const isAdmin = useIsAdmin();
-  
-  const handleToggleFavorite = (id: number) => {
-    const isFavorite = favorites.includes(id);
-    toggleFavorite.mutate({ contentId: id, isFavorite });
-  };
 
   const handleStartFullscreen = (files: any[], contentId: number, format: string) => {
     setTaskData({ files, contentId, format });
@@ -73,10 +62,16 @@ const ContentLibrary = () => {
     setSidePanelOpen(true);
   };
   
-  const filteredContent = ideas?.filter(idea => 
-    idea.title.toLowerCase().includes(searchTerm.toLowerCase()) || 
-    idea.description.toLowerCase().includes(searchTerm.toLowerCase())
-  ) || [];
+  const filteredAssignments = assignments.filter(assignment => 
+    statusFilter === 'all' || assignment.status === statusFilter
+  );
+
+  const statusCounts = {
+    all: assignments.length,
+    'not-started': assignments.filter(a => a.status === 'not-started').length,
+    'in-progress': assignments.filter(a => a.status === 'in-progress').length,
+    completed: assignments.filter(a => a.status === 'completed').length,
+  };
 
   if (isLoading) {
     return (
@@ -125,9 +120,9 @@ const ContentLibrary = () => {
       <div className="space-y-6">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold tracking-tight">My Assignments</h1>
+            <h1 className="text-3xl font-bold tracking-tight">Monthly Content Plan</h1>
             <p className="text-muted-foreground">
-              Track and complete your content assignments
+              Complete your assigned content for this month
             </p>
           </div>
           <div className="flex items-center gap-2">
@@ -143,48 +138,39 @@ const ContentLibrary = () => {
                 ADMIN PANEL
               </Button>
             )}
-            <Button variant="outline" size="sm">
-              <Filter className="h-4 w-4 mr-2" />
-              Filter
-            </Button>
           </div>
         </div>
 
-        {/* Search Bar */}
-        <div className="relative max-w-md">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-          <Input 
-            placeholder="Search assignments..." 
-            value={searchTerm} 
-            onChange={(e) => setSearchTerm(e.target.value)} 
-            className="pl-10" 
-          />
-        </div>
-
-        <Tabs defaultValue="all" className="w-full">
+        {/* Status Filter Tabs */}
+        <Tabs value={statusFilter} onValueChange={(value) => setStatusFilter(value as any)} className="w-full">
           <TabsList className="mb-6">
-            {categories.map((category) => (
-              <TabsTrigger key={category.id} value={category.name}>
-                {category.name === 'all' ? 'All Content' : 
-                 category.name.split('-').map(word => 
-                   word.charAt(0).toUpperCase() + word.slice(1)
-                 ).join(' ')}
-              </TabsTrigger>
-            ))}
+            <TabsTrigger value="all" className="flex items-center gap-2">
+              <Circle className="h-4 w-4" />
+              All ({statusCounts.all})
+            </TabsTrigger>
+            <TabsTrigger value="not-started" className="flex items-center gap-2">
+              <Circle className="h-4 w-4" />
+              Todo ({statusCounts['not-started']})
+            </TabsTrigger>
+            <TabsTrigger value="in-progress" className="flex items-center gap-2">
+              <Clock className="h-4 w-4" />
+              In Progress ({statusCounts['in-progress']})
+            </TabsTrigger>
+            <TabsTrigger value="completed" className="flex items-center gap-2">
+              <CheckCircle2 className="h-4 w-4" />
+              Completed ({statusCounts.completed})
+            </TabsTrigger>
           </TabsList>
 
-          {categories.map((category) => (
-            <TabsContent key={category.id} value={category.name} className="mt-0">
-              <ContentGrid 
-                ideas={category.name === 'all' ? filteredContent : 
-                       filteredContent.filter((idea) => idea.category === category.name)} 
-                favorites={favorites} 
-                onToggleFavorite={handleToggleFavorite}
-                onStartFullscreen={handleStartFullscreen}
-                onStartSidePanel={handleStartSidePanel}
-              />
-            </TabsContent>
-          ))}
+          <TabsContent value={statusFilter} className="mt-0">
+            <ContentGrid 
+              ideas={filteredAssignments} 
+              favorites={[]} 
+              onToggleFavorite={() => {}} // Remove favorites functionality
+              onStartFullscreen={handleStartFullscreen}
+              onStartSidePanel={handleStartSidePanel}
+            />
+          </TabsContent>
         </Tabs>
 
         {/* Side Panel */}
