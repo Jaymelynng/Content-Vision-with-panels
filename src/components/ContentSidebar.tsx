@@ -11,22 +11,23 @@ import { cn } from '@/lib/utils';
 interface ContentSidebarProps {
   selectedContentId?: number;
   onContentSelect: (contentId: number) => void;
+  selectedMonth: string;
   collapsed?: boolean;
   onToggleCollapse?: () => void;
 }
 
 export const ContentSidebar = ({ 
   selectedContentId, 
-  onContentSelect, 
+  onContentSelect,
+  selectedMonth: parentSelectedMonth, 
   collapsed = false, 
   onToggleCollapse 
 }: ContentSidebarProps) => {
   const [searchTerm, setSearchTerm] = useState('');
-  const [selectedMonth, setSelectedMonth] = useState<string>('');
   const [statusFilter, setStatusFilter] = useState<string>('all');
   
   const { data: availableMonths = [] } = useAvailableMonths();
-  const { data: assignments = [] } = useContentAssignments(selectedMonth);
+  const { data: assignments = [] } = useContentAssignments(parentSelectedMonth);
 
   const filteredAssignments = assignments.filter(assignment => {
     const matchesSearch = assignment.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -100,16 +101,9 @@ export const ContentSidebar = ({
             </div>
             
             <div className="flex gap-2">
-              <select
-                value={selectedMonth}
-                onChange={(e) => setSelectedMonth(e.target.value)}
-                className="flex-1 p-2 rounded-md border border-border bg-background text-sm"
-              >
-                <option value="">All Months</option>
-                {availableMonths.map(month => (
-                  <option key={month} value={month}>{month}</option>
-                ))}
-              </select>
+              <div className="flex-1 p-2 rounded-md border border-border bg-muted text-sm text-muted-foreground">
+                {parentSelectedMonth || 'All Months'}
+              </div>
               
               <select
                 value={statusFilter}

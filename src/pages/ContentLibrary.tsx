@@ -124,6 +124,7 @@ const ContentLibrary = () => {
         <ContentSidebar
           selectedContentId={selectedContentId}
           onContentSelect={handleContentSelect}
+          selectedMonth={selectedMonth}
         />
 
         {/* Main Content Area */}
