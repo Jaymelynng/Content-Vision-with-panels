@@ -44,6 +44,45 @@ export type Database = {
         }
         Relationships: []
       }
+      clip_comments: {
+        Row: {
+          comment_text: string
+          content_id: number
+          created_at: string
+          gym_id: string
+          id: string
+          is_admin: boolean
+          progress_id: string
+          requirement_index: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          comment_text: string
+          content_id: number
+          created_at?: string
+          gym_id: string
+          id?: string
+          is_admin?: boolean
+          progress_id: string
+          requirement_index: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          comment_text?: string
+          content_id?: number
+          created_at?: string
+          gym_id?: string
+          id?: string
+          is_admin?: boolean
+          progress_id?: string
+          requirement_index?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       content_categories: {
         Row: {
           active: boolean | null
@@ -73,9 +112,14 @@ export type Database = {
       }
       content_ideas: {
         Row: {
+          caption_ideas: string[] | null
           category: string
+          coaching_script: string | null
+          concept_goal: string | null
           content_formats: string[] | null
+          content_notes: string | null
           created_at: string | null
+          data_points: string[] | null
           description: string
           difficulty: string
           due_date: string | null
@@ -83,8 +127,12 @@ export type Database = {
           features: string[]
           file_requirements: Json | null
           formats: string[]
+          google_trends: string[] | null
+          hook_ideas: string[] | null
           id: number
           month_year: string | null
+          music_vibes: string[] | null
+          post_visual: string | null
           production_tips_photo: string[]
           production_tips_video: string[]
           requirements: Json
@@ -92,15 +140,22 @@ export type Database = {
           setup_planning_video: string[]
           status_options: string[] | null
           target_audience: string[]
+          theme: string | null
           thumbnail: string | null
           title: string
+          upload_instructions: string | null
           upload_track_photo: string[]
           upload_track_video: string[]
         }
         Insert: {
+          caption_ideas?: string[] | null
           category: string
+          coaching_script?: string | null
+          concept_goal?: string | null
           content_formats?: string[] | null
+          content_notes?: string | null
           created_at?: string | null
+          data_points?: string[] | null
           description: string
           difficulty: string
           due_date?: string | null
@@ -108,8 +163,12 @@ export type Database = {
           features: string[]
           file_requirements?: Json | null
           formats: string[]
+          google_trends?: string[] | null
+          hook_ideas?: string[] | null
           id?: number
           month_year?: string | null
+          music_vibes?: string[] | null
+          post_visual?: string | null
           production_tips_photo: string[]
           production_tips_video: string[]
           requirements: Json
@@ -117,15 +176,22 @@ export type Database = {
           setup_planning_video: string[]
           status_options?: string[] | null
           target_audience: string[]
+          theme?: string | null
           thumbnail?: string | null
           title: string
+          upload_instructions?: string | null
           upload_track_photo: string[]
           upload_track_video: string[]
         }
         Update: {
+          caption_ideas?: string[] | null
           category?: string
+          coaching_script?: string | null
+          concept_goal?: string | null
           content_formats?: string[] | null
+          content_notes?: string | null
           created_at?: string | null
+          data_points?: string[] | null
           description?: string
           difficulty?: string
           due_date?: string | null
@@ -133,8 +199,12 @@ export type Database = {
           features?: string[]
           file_requirements?: Json | null
           formats?: string[]
+          google_trends?: string[] | null
+          hook_ideas?: string[] | null
           id?: number
           month_year?: string | null
+          music_vibes?: string[] | null
+          post_visual?: string | null
           production_tips_photo?: string[]
           production_tips_video?: string[]
           requirements?: Json
@@ -142,8 +212,10 @@ export type Database = {
           setup_planning_video?: string[]
           status_options?: string[] | null
           target_audience?: string[]
+          theme?: string | null
           thumbnail?: string | null
           title?: string
+          upload_instructions?: string | null
           upload_track_photo?: string[]
           upload_track_video?: string[]
         }
@@ -328,6 +400,42 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      post_comments: {
+        Row: {
+          comment_text: string
+          content_id: number
+          created_at: string
+          gym_id: string
+          id: string
+          is_admin: boolean
+          month_year: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          comment_text: string
+          content_id: number
+          created_at?: string
+          gym_id: string
+          id?: string
+          is_admin?: boolean
+          month_year: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          comment_text?: string
+          content_id?: number
+          created_at?: string
+          gym_id?: string
+          id?: string
+          is_admin?: boolean
+          month_year?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
       }
       submission_comments: {
         Row: {
