@@ -83,6 +83,54 @@ export type Database = {
         }
         Relationships: []
       }
+      content_archives: {
+        Row: {
+          archive_month: string
+          content_id: number
+          created_at: string
+          edited_files: Json | null
+          final_files: Json | null
+          gym_id: string
+          id: string
+          performance_metrics: Json | null
+          progress_id: string | null
+          raw_files: Json | null
+          repurpose_potential: string | null
+          tags: string[] | null
+          updated_at: string
+        }
+        Insert: {
+          archive_month: string
+          content_id: number
+          created_at?: string
+          edited_files?: Json | null
+          final_files?: Json | null
+          gym_id: string
+          id?: string
+          performance_metrics?: Json | null
+          progress_id?: string | null
+          raw_files?: Json | null
+          repurpose_potential?: string | null
+          tags?: string[] | null
+          updated_at?: string
+        }
+        Update: {
+          archive_month?: string
+          content_id?: number
+          created_at?: string
+          edited_files?: Json | null
+          final_files?: Json | null
+          gym_id?: string
+          id?: string
+          performance_metrics?: Json | null
+          progress_id?: string | null
+          raw_files?: Json | null
+          repurpose_potential?: string | null
+          tags?: string[] | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       content_categories: {
         Row: {
           active: boolean | null
@@ -118,7 +166,9 @@ export type Database = {
           concept_goal: string | null
           content_formats: string[] | null
           content_notes: string | null
+          content_status: string | null
           created_at: string | null
+          created_by_admin: string | null
           data_points: string[] | null
           description: string
           difficulty: string
@@ -130,11 +180,13 @@ export type Database = {
           google_trends: string[] | null
           hook_ideas: string[] | null
           id: number
+          lifecycle_stage: string | null
           month_year: string | null
           music_vibes: string[] | null
           post_visual: string | null
           production_tips_photo: string[]
           production_tips_video: string[]
+          publication_month: string | null
           requirements: Json
           setup_planning_photo: string[]
           setup_planning_video: string[]
@@ -154,7 +206,9 @@ export type Database = {
           concept_goal?: string | null
           content_formats?: string[] | null
           content_notes?: string | null
+          content_status?: string | null
           created_at?: string | null
+          created_by_admin?: string | null
           data_points?: string[] | null
           description: string
           difficulty: string
@@ -166,11 +220,13 @@ export type Database = {
           google_trends?: string[] | null
           hook_ideas?: string[] | null
           id?: number
+          lifecycle_stage?: string | null
           month_year?: string | null
           music_vibes?: string[] | null
           post_visual?: string | null
           production_tips_photo: string[]
           production_tips_video: string[]
+          publication_month?: string | null
           requirements: Json
           setup_planning_photo: string[]
           setup_planning_video: string[]
@@ -190,7 +246,9 @@ export type Database = {
           concept_goal?: string | null
           content_formats?: string[] | null
           content_notes?: string | null
+          content_status?: string | null
           created_at?: string | null
+          created_by_admin?: string | null
           data_points?: string[] | null
           description?: string
           difficulty?: string
@@ -202,11 +260,13 @@ export type Database = {
           google_trends?: string[] | null
           hook_ideas?: string[] | null
           id?: number
+          lifecycle_stage?: string | null
           month_year?: string | null
           music_vibes?: string[] | null
           post_visual?: string | null
           production_tips_photo?: string[]
           production_tips_video?: string[]
+          publication_month?: string | null
           requirements?: Json
           setup_planning_photo?: string[]
           setup_planning_video?: string[]
@@ -218,6 +278,48 @@ export type Database = {
           upload_instructions?: string | null
           upload_track_photo?: string[]
           upload_track_video?: string[]
+        }
+        Relationships: []
+      }
+      content_versions: {
+        Row: {
+          content_id: number
+          created_at: string
+          file_name: string
+          file_path: string
+          file_size: number | null
+          gym_id: string
+          id: string
+          progress_id: string
+          upload_timestamp: string
+          version_notes: string | null
+          version_type: string
+        }
+        Insert: {
+          content_id: number
+          created_at?: string
+          file_name: string
+          file_path: string
+          file_size?: number | null
+          gym_id: string
+          id?: string
+          progress_id: string
+          upload_timestamp?: string
+          version_notes?: string | null
+          version_type: string
+        }
+        Update: {
+          content_id?: number
+          created_at?: string
+          file_name?: string
+          file_path?: string
+          file_size?: number | null
+          gym_id?: string
+          id?: string
+          progress_id?: string
+          upload_timestamp?: string
+          version_notes?: string | null
+          version_type?: string
         }
         Relationships: []
       }
@@ -536,6 +638,8 @@ export type Database = {
           admin_approved: boolean | null
           admin_feedback_required: boolean | null
           admin_reviewed: boolean | null
+          approved_at: string | null
+          archived_at: string | null
           assignment_month: string | null
           content_id: number | null
           created_at: string | null
@@ -543,9 +647,13 @@ export type Database = {
           gym_id: string | null
           id: string
           last_comment_id: string | null
+          lifecycle_stage: string | null
+          publication_month: string | null
+          published_at: string | null
           selected_format: string
           status: string | null
           submission_notes: string | null
+          submitted_at: string | null
           updated_at: string | null
           upload_progress: Json | null
           uploaded_files: Json | null
@@ -555,6 +663,8 @@ export type Database = {
           admin_approved?: boolean | null
           admin_feedback_required?: boolean | null
           admin_reviewed?: boolean | null
+          approved_at?: string | null
+          archived_at?: string | null
           assignment_month?: string | null
           content_id?: number | null
           created_at?: string | null
@@ -562,9 +672,13 @@ export type Database = {
           gym_id?: string | null
           id?: string
           last_comment_id?: string | null
+          lifecycle_stage?: string | null
+          publication_month?: string | null
+          published_at?: string | null
           selected_format: string
           status?: string | null
           submission_notes?: string | null
+          submitted_at?: string | null
           updated_at?: string | null
           upload_progress?: Json | null
           uploaded_files?: Json | null
@@ -574,6 +688,8 @@ export type Database = {
           admin_approved?: boolean | null
           admin_feedback_required?: boolean | null
           admin_reviewed?: boolean | null
+          approved_at?: string | null
+          archived_at?: string | null
           assignment_month?: string | null
           content_id?: number | null
           created_at?: string | null
@@ -581,9 +697,13 @@ export type Database = {
           gym_id?: string | null
           id?: string
           last_comment_id?: string | null
+          lifecycle_stage?: string | null
+          publication_month?: string | null
+          published_at?: string | null
           selected_format?: string
           status?: string | null
           submission_notes?: string | null
+          submitted_at?: string | null
           updated_at?: string | null
           upload_progress?: Json | null
           uploaded_files?: Json | null
